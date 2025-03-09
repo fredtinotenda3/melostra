@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { services, whyChooseUs, testimonials } from '../constants'; // Ensure this is the correct path
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { services, whyChooseUs, testimonials } from "../constants"; // Ensure this is the correct path
 
 const Services = () => {
   return (
@@ -12,8 +12,10 @@ const Services = () => {
         transition={{ duration: 1 }}
         className="bg-blue-500 text-white py-32 text-center"
       >
-        <h1 className="text-5xl font-bold">Our Services</h1>
-        <p className="mt-4 text-xl">Professional cleaning services tailored to your needs.</p>
+        <h1 className="text-5xl text-black font-bold">Our Services</h1>
+        <p className="mt-4 text-xl text-black">
+          Professional cleaning services tailored to your needs.
+        </p>
       </div>
 
       {/* Services Grid Section */}
@@ -48,7 +50,9 @@ const Services = () => {
       {/* Why Choose Us Section */}
       <section className="bg-gray-100 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Why Choose Melostra?</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Why Choose Melostra?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {whyChooseUs.map((reason, index) => (
               <div
@@ -69,7 +73,9 @@ const Services = () => {
 
       {/* Testimonials Section */}
       <section className="container mx-auto my-16 px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">What Our Clients Say</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          What Our Clients Say
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <div
@@ -101,8 +107,12 @@ const Services = () => {
 
       {/* Call to Action Section */}
       <section className="bg-blue-500 text-white py-16 text-center">
-        <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Space?</h2>
-        <p className="text-xl mb-8">Book a cleaning service today and experience the Melostra difference.</p>
+        <h2 className="text-3xl font-bold mb-4">
+          Ready to Transform Your Space?
+        </h2>
+        <p className="text-xl mb-8">
+          Book a cleaning service today and experience the Melostra difference.
+        </p>
         <button className="bg-white text-blue-500 px-8 py-3 rounded-lg hover:bg-blue-100 transition-colors">
           Book Now
         </button>

@@ -160,8 +160,8 @@ const ServiceCard = ({ service }: { service: Service }) => (
     <Link href={service.link}>
       <div className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow">
         <div className="text-blue-600 mb-4">{service.icon}</div>
-        <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-        <p className="text-gray-600">{service.description}</p>
+        <h3 className="text-xl text-black font-bold mb-2">{service.title}</h3>
+        <p className="text-black">{service.description}</p>
       </div>
     </Link>
   </motion.div>
@@ -179,8 +179,8 @@ const ProductCard = ({ product }: { product: Product }) => (
           height={200}
           className="w-full h-48 object-cover mb-4 rounded-lg"
         />
-        <h3 className="text-lg font-bold">{product.name}</h3>
-        <p className="text-gray-600">{product.description}</p>
+        <h3 className="text-lg text-black font-bold">{product.name}</h3>
+        <p className="text-black">{product.description}</p>
         <p className="text-blue-600 font-bold mt-2">
           ${product.price.toFixed(2)}
         </p>
@@ -244,7 +244,7 @@ const Home = () => {
         variants={staggerContainer}
       >
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">
+          <h2 className="text-3xl text-black font-bold text-center mb-8">
             Featured Products
           </h2>
           <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-8">
