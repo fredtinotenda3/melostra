@@ -6,12 +6,12 @@ export const carouselItems = [
     description: "Professional Cleaning Services and High-Quality Products",
   },
   {
-    image: "/assets/images/clean2.png",
+    image: "/assets/images/office-cleaning-carousel.jpg",
     title: "Office Cleaning Solutions",
     description: "Efficient and thorough cleaning for your workspace.",
   },
   {
-    image: "/assets/images/pest3.png",
+    image: "/assets/images/pest-control-carousel.jpg",
     title: "Pest Control Services",
     description:
       "Effective and eco-friendly pest control for homes and businesses.",
