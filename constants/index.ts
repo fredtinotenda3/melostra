@@ -1,7 +1,7 @@
 //CAROUSEL
 export const carouselItems = [
   {
-    image: "/assets/images/washing-car.webp",
+    image: "/assets/images/washing-car-carousel.webp",
     title: "Your Trusted Cleaning Partner",
     description: "Professional Cleaning Services and High-Quality Products",
   },
@@ -29,7 +29,7 @@ export const home_products = [
     name: "Cleaning Machine X1",
     description: "High-performance cleaning machine for all surfaces.",
     price: 299.99,
-    image: "/assets/images/p43-1.jpg",
+    image: "/assets/images/featured5.jpg",
     width: 100,
     height: 100,
     link: "/products#cleaning-machine",
@@ -39,7 +39,7 @@ export const home_products = [
     name: "Eco-Friendly Cleaner",
     description: "Environmentally friendly cleaning solution.",
     price: 19.99,
-    image: "/assets/images/p44-2.jpg",
+    image: "/assets/images/featured6.jpg",
     width: 100,
     height: 100,
     link: "/products#eco-cleaner",
@@ -49,7 +49,7 @@ export const home_products = [
     name: "Pest Control Kit",
     description: "Complete kit for pest control at home.",
     price: 49.99,
-    image: "/assets/images/p45-2.jpg",
+    image: "/assets/images/featured3.jpg",
     width: 100,
     height: 100,
     link: "/products#pest-kit",
