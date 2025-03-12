@@ -22,10 +22,11 @@ import Link from "next/link";
 import { serviceCategories } from "@/constants";
 import PropTypes from "prop-types";
 
-// Fallback component for error handling
 const ErrorFallback = ({ error }) => (
-  <div className="p-4 bg-red-50 text-red-700 rounded-lg">
-    <p>Error loading component: {error.message}</p>
+  <div className="p-4 bg-red-50 text-red-700 rounded-lg" role="alert">
+    <p className="text-sm font-medium">
+      Error loading component: {error.message}
+    </p>
   </div>
 );
 
@@ -43,15 +44,29 @@ const categoryIcons = {
   Default: CheckCircle2,
 };
 
+const GradientText = ({ from, to, children }) => (
+  <span
+    className={`bg-gradient-to-r ${from} ${to} bg-clip-text text-transparent`}
+  >
+    {children}
+  </span>
+);
+
+GradientText.propTypes = {
+  from: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
+
 const ServicePage = () => (
-  <>
+  <div className="min-h-screen flex flex-col">
     <Header />
-    <main className="bg-gradient-to-b from-blue-50 to-white">
+    <main className="bg-gradient-to-b from-blue-50 to-white flex-1">
       <HeroSection />
       <ServiceCategories />
     </main>
     <Footer />
-  </>
+  </div>
 );
 
 const HeroSection = () => {
@@ -59,9 +74,12 @@ const HeroSection = () => {
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    setReducedMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    );
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mediaQuery.matches);
+
+    const handler = (e) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
   useEffect(() => {
@@ -73,7 +91,7 @@ const HeroSection = () => {
   }, [reducedMotion]);
 
   return (
-    <section className="relative h-[200px] sm:h-[300px] lg:h-[400px] w-full overflow-hidden">
+    <section className="relative h-56 w-full overflow-hidden">
       <AnimatePresence mode="wait">
         {serviceCategories.map(
           (category, index) =>
@@ -100,17 +118,17 @@ const HeroSection = () => {
                   />
                 </motion.div>
 
-                <h1 className="text-3xl sm:text-4xl font-bold mb-2">
-                  <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                  <GradientText from="from-blue-600" to="to-green-500">
                     {category.title.split(" ")[0]}
-                  </span>
+                  </GradientText>
                   <span className="text-gray-900">
                     {" "}
                     {category.title.split(" ").slice(1).join(" ")}
                   </span>
                 </h1>
 
-                <p className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto">
+                <p className="text-xs sm:text-sm text-gray-600 max-w-xl mx-auto">
                   {category.description}
                 </p>
               </motion.div>
@@ -143,7 +161,7 @@ const HeroSection = () => {
 const ServiceCategories = () => (
   <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     {serviceCategories.map((category) => (
-      <div key={category.id} className="mb-16">
+      <div key={category.id} className="mb-16 scroll-mt-16" id={category.id}>
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -156,9 +174,9 @@ const ServiceCategories = () => (
           />
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-2">
-              <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
+              <GradientText from="from-blue-600" to="to-green-500">
                 {category.title.split(" ")[0]}
-              </span>
+              </GradientText>
               <span className="text-gray-800">
                 {" "}
                 {category.title.split(" ").slice(1).join(" ")}
@@ -182,15 +200,40 @@ const ServiceCategories = () => (
   </section>
 );
 
-const ImageCarousel = ({ images, features }) => {
+const CarouselIndicators = ({ count, activeIndex, onClick, label }) => (
+  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+    {[...Array(count)].map((_, idx) => (
+      <button
+        key={idx}
+        onClick={() => onClick(idx)}
+        className={`w-2 h-2 rounded-full transition-colors ${
+          activeIndex === idx ? "bg-white" : "bg-white/50"
+        }`}
+        aria-label={`${label} ${idx + 1} of ${count}`}
+      />
+    ))}
+  </div>
+);
+
+CarouselIndicators.propTypes = {
+  count: PropTypes.number.isRequired,
+  activeIndex: PropTypes.number.isRequired,
+  onClick: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
+};
+
+const ImageCarousel = ({ images }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    setReducedMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    );
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mediaQuery.matches);
+
+    const handler = (e) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
   useEffect(() => {
@@ -204,13 +247,22 @@ const ImageCarousel = ({ images, features }) => {
   }, [isHovered, images, reducedMotion]);
 
   const handleImageChange = (direction) => {
-    setCurrentImageIndex((prev) => {
-      if (direction === "next") {
-        return (prev + 1) % images.length;
-      }
-      return (prev - 1 + images.length) % images.length;
-    });
+    setCurrentImageIndex((prev) =>
+      direction === "next"
+        ? (prev + 1) % images.length
+        : (prev - 1 + images.length) % images.length
+    );
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowLeft") handleImageChange("prev");
+      if (e.key === "ArrowRight") handleImageChange("next");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   if (!images?.length) return null;
 
@@ -228,14 +280,20 @@ const ImageCarousel = ({ images, features }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: reducedMotion ? 0 : 0.3 }}
           className="absolute inset-0"
+          drag={images.length > 1 ? "x" : false}
+          onDragEnd={(e, { offset }) => {
+            if (Math.abs(offset.x) > 50) {
+              handleImageChange(offset.x > 0 ? "prev" : "next");
+            }
+          }}
         >
           <Image
-            src={images[currentImageIndex]}
-            alt={features[currentImageIndex] || "Service feature"}
+            src={images[currentImageIndex].src}
+            alt={images[currentImageIndex].alt}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 400px"
-            loading="lazy"
+            priority={currentImageIndex === 0}
           />
         </motion.div>
       </AnimatePresence>
@@ -245,32 +303,26 @@ const ImageCarousel = ({ images, features }) => {
           <div className="absolute inset-0 flex items-center justify-between p-2">
             <button
               onClick={() => handleImageChange("prev")}
-              className="p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80"
+              className="p-1.5 sm:p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80 transition-colors"
               aria-label="Previous image"
             >
               <ChevronLeft className="w-6 h-6 text-gray-900" />
             </button>
             <button
               onClick={() => handleImageChange("next")}
-              className="p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80"
+              className="p-1.5 sm:p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80 transition-colors"
               aria-label="Next image"
             >
               <ChevronRight className="w-6 h-6 text-gray-900" />
             </button>
           </div>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentImageIndex(idx)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  currentImageIndex === idx ? "bg-white" : "bg-white/50"
-                }`}
-                aria-label={`Go to image ${idx + 1}`}
-              />
-            ))}
-          </div>
+          <CarouselIndicators
+            count={images.length}
+            activeIndex={currentImageIndex}
+            onClick={setCurrentImageIndex}
+            label="Image"
+          />
         </>
       )}
     </div>
@@ -278,8 +330,22 @@ const ImageCarousel = ({ images, features }) => {
 };
 
 ImageCarousel.propTypes = {
-  images: PropTypes.array.isRequired,
-  features: PropTypes.array.isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      src: PropTypes.string.isRequired,
+      alt: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
+
+const PriceBadge = ({ price }) => (
+  <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+    {price}
+  </span>
+);
+
+PriceBadge.propTypes = {
+  price: PropTypes.string.isRequired,
 };
 
 const ServiceCard = ({ service, index }) => {
@@ -293,20 +359,21 @@ const ServiceCard = ({ service, index }) => {
       viewport={{ once: true, margin: "-50px" }}
       className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden"
     >
-      <ImageCarousel images={service.images} features={service.features} />
+      <ImageCarousel images={service.images} />
 
       <div className="p-5">
         <div className="flex items-center gap-3 mb-3">
-          <Icon className="w-7 h-7 text-blue-600" aria-hidden="true" />
+          <Icon
+            className="w-7 h-7 text-blue-600 flex-shrink-0"
+            aria-hidden="true"
+          />
           <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
             {service.title}
           </h3>
         </div>
 
         <div className="flex justify-between items-center mb-4">
-          <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-            {service.price}
-          </span>
+          <PriceBadge price={service.price} />
           <span className="text-sm text-gray-500">{service.duration}</span>
         </div>
 
@@ -314,7 +381,8 @@ const ServiceCard = ({ service, index }) => {
           {service.features.map((feature, idx) => (
             <li
               key={idx}
-              className="flex items-start text-gray-600 cursor-pointer"
+              className="flex items-start text-gray-600"
+              aria-label="Service feature"
             >
               <CheckCircle2
                 className="w-4 h-4 text-green-500 mr-2 mt-1 flex-shrink-0"
@@ -327,7 +395,7 @@ const ServiceCard = ({ service, index }) => {
 
         <Link
           href="/contact"
-          className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+          className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
           aria-label={`Book ${service.title} service`}
         >
           <span>Book Service</span>
@@ -339,7 +407,20 @@ const ServiceCard = ({ service, index }) => {
 };
 
 ServiceCard.propTypes = {
-  service: PropTypes.object.isRequired,
+  service: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    price: PropTypes.string.isRequired,
+    duration: PropTypes.string.isRequired,
+    features: PropTypes.arrayOf(PropTypes.string).isRequired,
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        src: PropTypes.string.isRequired,
+        alt: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    category: PropTypes.oneOf(Object.keys(categoryIcons)),
+  }).isRequired,
   index: PropTypes.number.isRequired,
 };
 
@@ -348,6 +429,10 @@ class ErrorBoundary extends React.Component {
 
   static getDerivedStateFromError(error) {
     return { error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ServiceCard Error:", error, errorInfo.componentStack);
   }
 
   render() {
