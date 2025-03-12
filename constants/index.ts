@@ -1,3 +1,12 @@
+import {
+  Sparkles,
+  Building,
+  Droplets,
+  Leaf,
+  CalendarDays,
+  Bug,
+} from "lucide-react";
+
 //CAROUSEL
 export const carouselItems = [
   {
@@ -58,48 +67,378 @@ export const home_products = [
 
 //HOME-PAGE PRODUCTS-END
 
-export const services = [
+//SERVICE-PAGE-INFOR
+
+export const serviceCategories = [
   {
-    id: 1,
-    name: "Car Cleaning",
-    description:
-      "Professional car cleaning services to keep your vehicle spotless.",
-    image: "/images/car-cleaning.jpg",
+    title: "Residential Cleaning",
+    description: "Complete home cleaning solutions for spotless living spaces",
+    icon: Sparkles,
+    services: [
+      {
+        title: "Standard Cleaning",
+        category: "Residential",
+        price: "From $150",
+        duration: "2-3 hours",
+        features: [
+          "Surface cleaning & dusting",
+          "Vacuuming & mopping",
+          "Bathroom sanitization",
+          "Kitchen cleaning",
+        ],
+        images: [
+          "/assets/images/standard-1.jpg",
+          "/assets/images/standard-2.jpg",
+          "/assets/images/standard-3.jpg",
+          "/assets/images/standard-4.jpg",
+        ],
+      },
+      {
+        title: "Deep Cleaning",
+        category: "Residential",
+        price: "From $250",
+        duration: "4-6 hours",
+        features: [
+          "Detailed room-by-room cleaning",
+          "Appliance exteriors",
+          "Baseboard cleaning",
+          "Interior window sills",
+        ],
+        images: [
+          "/assets/images/deep-1.jpg",
+          "/assets/images/deep-2.jpg",
+          "/assets/images/deep-3.jpg",
+          "/assets/images/deep-4.jpg",
+        ],
+      },
+      {
+        title: "Move-in/Move-out",
+        category: "Residential",
+        price: "From $300",
+        duration: "5-8 hours",
+        features: [
+          "Full interior cleaning",
+          "Cabinet interiors",
+          "Light fixture cleaning",
+          "Appliance deep clean",
+        ],
+        images: [
+          "/assets/images/move-1.jpg",
+          "/assets/images/move-2.jpg",
+          "/assets/images/move-3.jpg",
+          "/assets/images/move-4.jpg",
+        ],
+      },
+    ],
   },
   {
-    id: 2,
-    name: "Office Cleaning",
-    description:
-      "Keep your workspace clean and productive with our office cleaning services.",
-    image: "/images/office-cleaning.jpg",
+    title: "Commercial Cleaning",
+    description: "Professional cleaning for businesses and workplaces",
+    icon: Building,
+    services: [
+      {
+        title: "Office Cleaning",
+        category: "Commercial",
+        price: "From $200",
+        duration: "Daily/Weekly",
+        features: [
+          "Daily maintenance cleaning",
+          "Restroom sanitation",
+          "Floor care & polishing",
+          "Waste removal",
+        ],
+        images: [
+          "/assets/images/office-1.jpg",
+          "/assets/images/office-2.jpg",
+          "/assets/images/office-3.jpg",
+          "/assets/images/office-4.jpg",
+        ],
+      },
+      {
+        title: "Retail Cleaning",
+        category: "Commercial",
+        price: "From $250",
+        duration: "After Hours",
+        features: [
+          "Floor maintenance",
+          "Display cleaning",
+          "Window cleaning",
+          "High-traffic area focus",
+        ],
+        images: [
+          "/assets/images/retail-1.jpg",
+          "/assets/images/retail-2.jpg",
+          "/assets/images/retail-3.jpg",
+          "/assets/images/retail-4.jpg",
+        ],
+      },
+      {
+        title: "Industrial Cleaning",
+        category: "Commercial",
+        price: "Custom Quote",
+        duration: "Project Basis",
+        features: [
+          "Heavy-duty cleaning",
+          "Machinery cleaning",
+          "Warehouse maintenance",
+          "Safety compliance",
+        ],
+        images: [
+          "/assets/images/industrial-1.jpg",
+          "/assets/images/industrial-2.jpg",
+          "/assets/images/industrial-3.jpg",
+          "/assets/images/industrial-4.jpg",
+        ],
+      },
+    ],
   },
   {
-    id: 3,
-    name: "Deep Cleaning",
-    description:
-      "Thorough cleaning for homes and offices to ensure a healthy environment.",
-    image: "/images/deep-cleaning.jpg",
+    title: "Specialized Cleaning",
+    description: "Expert cleaning requiring specialized equipment",
+    icon: Droplets,
+    services: [
+      {
+        title: "Carpet Cleaning",
+        category: "Specialized",
+        price: "From $200",
+        duration: "3-4 hours",
+        features: [
+          "Steam cleaning",
+          "Stain removal",
+          "Deodorizing",
+          "Fast drying",
+        ],
+        images: [
+          "/assets/images/carpet-1.jpg",
+          "/assets/images/carpet-2.jpg",
+          "/assets/images/carpet-3.jpg",
+          "/assets/images/carpet-4.jpg",
+        ],
+      },
+      {
+        title: "Pressure Washing",
+        category: "Specialized",
+        price: "From $150",
+        duration: "2-4 hours",
+        features: [
+          "Exterior surface cleaning",
+          "Driveway & patio washing",
+          "Deck restoration",
+          "Mold/mildew removal",
+        ],
+        images: [
+          "/assets/images/pressure-1.jpg",
+          "/assets/images/pressure-2.jpg",
+          "/assets/images/pressure-3.jpg",
+          "/assets/images/pressure-4.jpg",
+        ],
+      },
+      {
+        title: "Tile & Grout Cleaning",
+        category: "Specialized",
+        price: "From $180",
+        duration: "3-5 hours",
+        features: [
+          "Deep grout cleaning",
+          "Stain removal",
+          "Sealing treatment",
+          "Surface polishing",
+        ],
+        images: [
+          "/assets/images/tile-1.jpg",
+          "/assets/images/tile-2.jpg",
+          "/assets/images/tile-3.jpg",
+          "/assets/images/tile-4.jpg",
+        ],
+      },
+    ],
   },
   {
-    id: 4,
-    name: "Pest Control",
-    description: "Effective pest control solutions to protect your property.",
-    image: "/images/pest-control.jpg",
+    title: "Environmental Cleaning",
+    description: "Eco-friendly cleaning solutions",
+    icon: Leaf,
+    services: [
+      {
+        title: "Green Cleaning",
+        category: "Environmental",
+        price: "From $180",
+        duration: "3-4 hours",
+        features: [
+          "Non-toxic products",
+          "Sustainable methods",
+          "Energy-efficient equipment",
+          "Recycled materials",
+        ],
+        images: [
+          "/assets/images/green-1.jpg",
+          "/assets/images/green-2.webp",
+          "/assets/images/green-3.webp",
+          "/assets/images/green-4.webp",
+        ],
+      },
+      {
+        title: "Eco Carpet Care",
+        category: "Environmental",
+        price: "From $220",
+        duration: "3-5 hours",
+        features: [
+          "Plant-based solutions",
+          "Low-water methods",
+          "Biodegradable products",
+          "Allergy-safe",
+        ],
+        images: [
+          "/assets/images/eco-1.jpg",
+          "/assets/images/eco-2.jpg",
+          "/assets/images/eco-3.jpg",
+          "/assets/images/eco-4.jpg",
+        ],
+      },
+      {
+        title: "Solar Panel Cleaning",
+        category: "Environmental",
+        price: "From $150",
+        duration: "2-3 hours",
+        features: [
+          "Eco-friendly cleaning",
+          "Water conservation",
+          "Streak-free finish",
+          "Efficiency optimization",
+        ],
+        images: [
+          "/assets/images/solar-1.jpg",
+          "/assets/images/solar-2.jpg",
+          "/assets/images/solar-3.jpg",
+          "/assets/images/solar-4.jpg",
+        ],
+      },
+    ],
   },
   {
-    id: 5,
-    name: "Carpet Cleaning",
-    description: "Expert carpet cleaning to remove stains and odors.",
-    image: "/images/carpet-cleaning.jpg",
+    title: "Event Cleaning",
+    description: "Comprehensive event cleaning services",
+    icon: CalendarDays,
+    services: [
+      {
+        title: "Post-Event Cleanup",
+        category: "Event",
+        price: "From $300",
+        duration: "4-6 hours",
+        features: [
+          "Waste removal",
+          "Floor cleaning",
+          "Furniture reset",
+          "Deep sanitization",
+        ],
+        images: [
+          "/assets/images/post-1.jpg",
+          "/assets/images/post-2.jpg",
+          "/assets/images/post-3.jpg",
+          "/assets/images/post-4.jpg",
+        ],
+      },
+      {
+        title: "Venue Preparation",
+        category: "Event",
+        price: "From $200",
+        duration: "2-4 hours",
+        features: [
+          "Pre-event cleaning",
+          "Surface sanitization",
+          "Restroom stocking",
+          "Final touch-up",
+        ],
+        images: [
+          "/assets/images/venue-1.jpg",
+          "/assets/images/venue-2.jpg",
+          "/assets/images/venue-3.jpg",
+          "/assets/images/venue-4.jpg",
+        ],
+      },
+      {
+        title: "Concert Cleanup",
+        category: "Event",
+        price: "From $500",
+        duration: "6-8 hours",
+        features: [
+          "Large-scale waste removal",
+          "Crowd debris cleanup",
+          "Emergency cleaning",
+          "Post-event inspection",
+        ],
+        images: [
+          "/assets/images/concert-1.jpg",
+          "/assets/images/concert-2.jpg",
+          "/assets/images/concert-3.jpg",
+          "/assets/images/concert-4.jpg",
+        ],
+      },
+    ],
   },
   {
-    id: 6,
-    name: "Window Cleaning",
-    description:
-      "Crystal-clear windows with our professional cleaning service.",
-    image: "/images/window-cleaning.jpg",
+    title: "Pest Control",
+    description: "Integrated pest management solutions",
+    icon: Bug,
+    services: [
+      {
+        title: "General Pest Control",
+        category: "Pest",
+        price: "From $100",
+        duration: "1-2 hours",
+        features: [
+          "Insect elimination",
+          "Preventative treatment",
+          "Eco-friendly options",
+          "Follow-up visits",
+        ],
+        images: [
+          "/assets/images/general-1.jpg",
+          "/assets/images/general-2.jpg",
+          "/assets/images/general-3.jpg",
+          "/assets/images/general-4.jpg",
+        ],
+      },
+      {
+        title: "Rodent Control",
+        category: "Pest",
+        price: "From $150",
+        duration: "2-3 hours",
+        features: [
+          "Inspection & exclusion",
+          "Trap installation",
+          "Sanitation advice",
+          "Prevention sealing",
+        ],
+        images: [
+          "/assets/images/rodent-1.jpg",
+          "/assets/images/rodent-2.jpg",
+          "/assets/images/rodent-3.jpg",
+          "/assets/images/rodent-4.jpg",
+        ],
+      },
+      {
+        title: "Termite Treatment",
+        category: "Pest",
+        price: "From $300",
+        duration: "3-5 hours",
+        features: [
+          "Termite inspection",
+          "Colony elimination",
+          "Wood treatment",
+          "Prevention barrier",
+        ],
+        images: [
+          "/assets/images/termite-1.jpg",
+          "/assets/images/termite-2.jpg",
+          "/assets/images/termite-3.jpg",
+          "/assets/images/termite-4.jpg",
+        ],
+      },
+    ],
   },
 ];
+
+//END-OF-SERVICE-INFOR
 
 export const whyChooseUs = [
   {

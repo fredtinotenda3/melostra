@@ -1,0 +1,525 @@
+"use client";
+
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import {
+  Sparkles,
+  Droplets,
+  Building,
+  Leaf,
+  CalendarDays,
+  Bug,
+  CheckCircle2,
+  ArrowRight,
+} from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Image from "next/image";
+import Link from "next/link";
+
+const categoryIcons = {
+  Residential: Sparkles,
+  Commercial: Building,
+  Specialized: Droplets,
+  Environmental: Leaf,
+  Event: CalendarDays,
+  Pest: Bug,
+};
+
+const serviceCategories = [
+  {
+    title: "Residential Cleaning",
+    description: "Complete home cleaning solutions for spotless living spaces",
+    icon: Sparkles,
+    services: [
+      {
+        title: "Standard Cleaning",
+        category: "Residential",
+        price: "From $150",
+        duration: "2-3 hours",
+        features: [
+          "Surface cleaning & dusting",
+          "Vacuuming & mopping",
+          "Bathroom sanitization",
+          "Kitchen cleaning",
+        ],
+        image: "/assets/images/residential-standard.jpg",
+      },
+      {
+        title: "Deep Cleaning",
+        category: "Residential",
+        price: "From $250",
+        duration: "4-6 hours",
+        features: [
+          "Detailed room-by-room cleaning",
+          "Appliance exteriors",
+          "Baseboard cleaning",
+          "Interior window sills",
+        ],
+        image: "/assets/images/residential-deep.jpg",
+      },
+      {
+        title: "Move-in/Move-out",
+        category: "Residential",
+        price: "From $300",
+        duration: "5-8 hours",
+        features: [
+          "Full interior cleaning",
+          "Cabinet interiors",
+          "Light fixture cleaning",
+          "Appliance deep clean",
+        ],
+        image: "/assets/images/move-cleaning.jpg",
+      },
+    ],
+  },
+  {
+    title: "Commercial Cleaning",
+    description: "Professional cleaning for businesses and workplaces",
+    icon: Building,
+    services: [
+      {
+        title: "Office Cleaning",
+        category: "Commercial",
+        price: "From $200",
+        duration: "Daily/Weekly",
+        features: [
+          "Daily maintenance cleaning",
+          "Restroom sanitation",
+          "Floor care & polishing",
+          "Waste removal",
+        ],
+        image: "/assets/images/commercial-office.jpg",
+      },
+      {
+        title: "Retail Cleaning",
+        category: "Commercial",
+        price: "From $250",
+        duration: "After Hours",
+        features: [
+          "Floor maintenance",
+          "Display cleaning",
+          "Window cleaning",
+          "High-traffic area focus",
+        ],
+        image: "/assets/images/retail-cleaning.jpg",
+      },
+      {
+        title: "Industrial Cleaning",
+        category: "Commercial",
+        price: "Custom Quote",
+        duration: "Project Basis",
+        features: [
+          "Heavy-duty cleaning",
+          "Machinery cleaning",
+          "Warehouse maintenance",
+          "Safety compliance",
+        ],
+        image: "/assets/images/industrial-cleaning.jpg",
+      },
+    ],
+  },
+  {
+    title: "Specialized Cleaning",
+    description: "Expert cleaning requiring specialized equipment",
+    icon: Droplets,
+    services: [
+      {
+        title: "Carpet Cleaning",
+        category: "Specialized",
+        price: "From $200",
+        duration: "3-4 hours",
+        features: [
+          "Steam cleaning",
+          "Stain removal",
+          "Deodorizing",
+          "Fast drying",
+        ],
+        image: "/assets/images/carpet-cleaning.jpg",
+      },
+      {
+        title: "Pressure Washing",
+        category: "Specialized",
+        price: "From $150",
+        duration: "2-4 hours",
+        features: [
+          "Exterior surface cleaning",
+          "Driveway & patio washing",
+          "Deck restoration",
+          "Mold/mildew removal",
+        ],
+        image: "/assets/images/pressure-washing.jpg",
+      },
+      {
+        title: "Tile & Grout Cleaning",
+        category: "Specialized",
+        price: "From $180",
+        duration: "3-5 hours",
+        features: [
+          "Deep grout cleaning",
+          "Stain removal",
+          "Sealing treatment",
+          "Surface polishing",
+        ],
+        image: "/assets/images/tile-cleaning.jpg",
+      },
+    ],
+  },
+  {
+    title: "Environmental Cleaning",
+    description: "Eco-friendly cleaning solutions",
+    icon: Leaf,
+    services: [
+      {
+        title: "Green Cleaning",
+        category: "Environmental",
+        price: "From $180",
+        duration: "3-4 hours",
+        features: [
+          "Non-toxic products",
+          "Sustainable methods",
+          "Energy-efficient equipment",
+          "Recycled materials",
+        ],
+        image: "/assets/images/green-cleaning.jpg",
+      },
+      {
+        title: "Eco Carpet Care",
+        category: "Environmental",
+        price: "From $220",
+        duration: "3-5 hours",
+        features: [
+          "Plant-based solutions",
+          "Low-water methods",
+          "Biodegradable products",
+          "Allergy-safe",
+        ],
+        image: "/assets/images/eco-carpet.jpg",
+      },
+      {
+        title: "Solar Panel Cleaning",
+        category: "Environmental",
+        price: "From $150",
+        duration: "2-3 hours",
+        features: [
+          "Eco-friendly cleaning",
+          "Water conservation",
+          "Streak-free finish",
+          "Efficiency optimization",
+        ],
+        image: "/assets/images/solar-cleaning.jpg",
+      },
+    ],
+  },
+  {
+    title: "Event Cleaning",
+    description: "Comprehensive event cleaning services",
+    icon: CalendarDays,
+    services: [
+      {
+        title: "Post-Event Cleanup",
+        category: "Event",
+        price: "From $300",
+        duration: "4-6 hours",
+        features: [
+          "Waste removal",
+          "Floor cleaning",
+          "Furniture reset",
+          "Deep sanitization",
+        ],
+        image: "/assets/images/post-event.jpg",
+      },
+      {
+        title: "Venue Preparation",
+        category: "Event",
+        price: "From $200",
+        duration: "2-4 hours",
+        features: [
+          "Pre-event cleaning",
+          "Surface sanitization",
+          "Restroom stocking",
+          "Final touch-up",
+        ],
+        image: "/assets/images/venue-prep.jpg",
+      },
+      {
+        title: "Concert Cleanup",
+        category: "Event",
+        price: "From $500",
+        duration: "6-8 hours",
+        features: [
+          "Large-scale waste removal",
+          "Crowd debris cleanup",
+          "Emergency cleaning",
+          "Post-event inspection",
+        ],
+        image: "/assets/images/concert-cleanup.jpg",
+      },
+    ],
+  },
+  {
+    title: "Pest Control",
+    description: "Integrated pest management solutions",
+    icon: Bug,
+    services: [
+      {
+        title: "General Pest Control",
+        category: "Pest",
+        price: "From $100",
+        duration: "1-2 hours",
+        features: [
+          "Insect elimination",
+          "Preventative treatment",
+          "Eco-friendly options",
+          "Follow-up visits",
+        ],
+        image: "/assets/images/general-pest.jpg",
+      },
+      {
+        title: "Rodent Control",
+        category: "Pest",
+        price: "From $150",
+        duration: "2-3 hours",
+        features: [
+          "Inspection & exclusion",
+          "Trap installation",
+          "Sanitation advice",
+          "Prevention sealing",
+        ],
+        image: "/assets/images/rodent-control.jpg",
+      },
+      {
+        title: "Termite Treatment",
+        category: "Pest",
+        price: "From $300",
+        duration: "3-5 hours",
+        features: [
+          "Termite inspection",
+          "Colony elimination",
+          "Wood treatment",
+          "Prevention barrier",
+        ],
+        image: "/assets/images/termite-treatment.jpg",
+      },
+    ],
+  },
+];
+
+const ServicePage = () => (
+  <>
+    <Header />
+    <main className="bg-gradient-to-b from-blue-50 to-white">
+      <HeroSection />
+      <ServiceCategories />
+    </main>
+    <Footer />
+  </>
+);
+
+const HeroSection = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % serviceCategories.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="relative h-[226px] w-full overflow-hidden sm:h-[226px]">
+      <div className="absolute inset-0">
+        <AnimatePresence mode="wait">
+          {serviceCategories.map(
+            (category, index) =>
+              activeIndex === index && (
+                <motion.div
+                  key={category.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                  className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    className="mb-4 p-3 bg-white/20 backdrop-blur-sm rounded-xl"
+                  >
+                    <category.icon className="w-12 h-12 text-blue-600 p-2 bg-white rounded-lg shadow-md" />
+                  </motion.div>
+
+                  <motion.h1
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-3xl sm:text-4xl font-bold mb-2"
+                  >
+                    <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
+                      {category.title.split(" ")[0]}
+                    </span>
+                    <span className="text-gray-900">
+                      {" "}
+                      {category.title.split(" ").slice(1).join(" ")}
+                    </span>
+                  </motion.h1>
+
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto"
+                  >
+                    {category.description}
+                  </motion.p>
+                </motion.div>
+              )
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        {serviceCategories.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className="h-1.5 w-6 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm"
+          >
+            <motion.div
+              animate={{ width: activeIndex === index ? "100%" : "0%" }}
+              transition={{ duration: 4.8 }}
+              className="h-full bg-blue-600"
+            />
+          </button>
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        className="absolute inset-0 overflow-hidden"
+      >
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{
+              x: ["0%", "100%"],
+              y: ["0%", "100%"],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 15 + Math.random() * 15,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="absolute -top-12 -left-12 w-24 h-24 bg-gradient-to-r from-blue-200 to-green-200 rounded-full blur-lg opacity-50"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+          />
+        ))}
+      </motion.div>
+    </section>
+  );
+};
+
+const ServiceCategories = () => (
+  <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    {serviceCategories.map((category, index) => (
+      <div key={category.title} className="mb-16">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          className="flex flex-col items-center gap-3 mb-8 p-4 bg-white rounded-xl shadow-sm"
+        >
+          <category.icon className="w-10 h-10 text-blue-600 p-2 bg-blue-50 rounded-lg" />
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+              <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
+                {category.title.split(" ")[0]}
+              </span>
+              <span className="text-gray-800">
+                {" "}
+                {category.title.split(" ").slice(1).join(" ")}
+              </span>
+            </h2>
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+              {category.description}
+            </p>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {category.services.map((service, idx) => (
+            <ServiceCard
+              key={service.title}
+              service={service}
+              index={index * 10 + idx}
+            />
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+);
+
+const ServiceCard = ({ service, index }) => {
+  const Icon = categoryIcons[service.category];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden"
+    >
+      <div className="relative h-52">
+        <Image
+          src={service.image}
+          alt={service.title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 200px) 180px, (max-width: 768px) 340px, 400px"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" />
+      </div>
+
+      <div className="p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <Icon className="w-7 h-7 text-blue-600" />
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+            {service.title}
+          </h3>
+        </div>
+
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+            {service.price}
+          </span>
+          <span className="text-sm text-gray-500">{service.duration}</span>
+        </div>
+
+        <ul className="space-y-2.5 mb-4">
+          {service.features.map((feature, idx) => (
+            <li key={idx} className="flex items-start text-gray-600">
+              <CheckCircle2 className="w-4 h-4 text-green-500 mr-2 mt-1 flex-shrink-0" />
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        <Link
+          href="/contact"
+          className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+        >
+          <span>Book Service</span>
+          <ArrowRight className="w-5 h-5" />
+        </Link>
+      </div>
+    </motion.div>
+  );
+};
+
+export default ServicePage;
