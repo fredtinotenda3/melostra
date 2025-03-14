@@ -22,6 +22,9 @@ import Link from "next/link";
 import { serviceCategories } from "@/constants";
 import PropTypes from "prop-types";
 
+// Add to next.config.js for external images:
+// images: { domains: ['your-image-domain.com'] }
+
 const ErrorFallback = ({ error }) => (
   <div className="p-4 bg-red-50 text-red-700 rounded-lg" role="alert">
     <p className="text-sm font-medium">
@@ -99,7 +102,7 @@ const HeroSection = () => {
           (category, index) =>
             activeIndex === index && (
               <motion.div
-                key={`${category.id}-${activeIndex}`}
+                key={category.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -143,7 +146,7 @@ const HeroSection = () => {
           <button
             key={category.id}
             onClick={() => setActiveIndex(index)}
-            className="h-1.5 w-8 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm"
+            className="h-1.5 w-8 rounded-full overflow-hidden bg-white/20 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label={`Go to service category ${index + 1} of ${
               serviceCategories.length
             }`}
@@ -210,7 +213,7 @@ const CarouselIndicators = ({ count, activeIndex, onClick, label }) => (
         onClick={() => onClick(idx)}
         className={`w-2 h-2 rounded-full transition-colors ${
           activeIndex === idx ? "bg-white" : "bg-white/50"
-        }`}
+        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
         aria-label={`${label} ${idx + 1} of ${count}`}
       />
     ))}
@@ -266,11 +269,14 @@ const ImageCarousel = ({ images }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  if (!images?.length) return null;
+  if (!images?.length)
+    return (
+      <div className="relative h-48 md:h-52 w-full bg-gray-100 rounded-t-xl" />
+    );
 
   return (
     <div
-      className="relative h-52 w-full"
+      className="relative h-48 md:h-52 w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -283,6 +289,7 @@ const ImageCarousel = ({ images }) => {
           transition={{ duration: reducedMotion ? 0 : 0.3 }}
           className="absolute inset-0"
           drag={images.length > 1 ? "x" : false}
+          dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(e, { offset }) => {
             if (Math.abs(offset.x) > 50) {
               handleImageChange(offset.x > 0 ? "prev" : "next");
@@ -291,9 +298,9 @@ const ImageCarousel = ({ images }) => {
         >
           <Image
             src={images[currentImageIndex].src}
-            alt={images[currentImageIndex].alt}
+            alt={images[currentImageIndex].alt || "Service image"}
             fill
-            className="object-cover"
+            className="object-cover rounded-t-xl"
             sizes="(max-width: 768px) 100vw, 400px"
             priority={currentImageIndex === 0}
           />
@@ -305,14 +312,14 @@ const ImageCarousel = ({ images }) => {
           <div className="absolute inset-0 flex items-center justify-between p-2">
             <button
               onClick={() => handleImageChange("prev")}
-              className="p-1.5 sm:p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80 transition-colors"
+              className="p-1.5 sm:p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Previous image"
             >
               <ChevronLeft className="w-6 h-6 text-gray-900" />
             </button>
             <button
               onClick={() => handleImageChange("next")}
-              className="p-1.5 sm:p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80 transition-colors"
+              className="p-1.5 sm:p-2 bg-white/50 rounded-full backdrop-blur-sm hover:bg-white/80 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Next image"
             >
               <ChevronRight className="w-6 h-6 text-gray-900" />
@@ -323,7 +330,7 @@ const ImageCarousel = ({ images }) => {
             count={images.length}
             activeIndex={currentImageIndex}
             onClick={setCurrentImageIndex}
-            label="Image"
+            label="Service image"
           />
         </>
       )}
@@ -335,9 +342,13 @@ ImageCarousel.propTypes = {
   images: PropTypes.arrayOf(
     PropTypes.shape({
       src: PropTypes.string.isRequired,
-      alt: PropTypes.string.isRequired,
+      alt: PropTypes.string,
     })
-  ).isRequired,
+  ),
+};
+
+ImageCarousel.defaultProps = {
+  images: [],
 };
 
 const PriceBadge = ({ price }) => (
@@ -397,7 +408,7 @@ const ServiceCard = ({ service, index }) => {
 
         <Link
           href="/contact"
-          className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors"
+          className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           aria-label={`Book ${service.title} service`}
         >
           <span>Book Service</span>
@@ -418,9 +429,9 @@ ServiceCard.propTypes = {
     images: PropTypes.arrayOf(
       PropTypes.shape({
         src: PropTypes.string.isRequired,
-        alt: PropTypes.string.isRequired,
+        alt: PropTypes.string,
       })
-    ).isRequired,
+    ),
     category: PropTypes.oneOf(Object.keys(categoryIcons)),
   }).isRequired,
   index: PropTypes.number.isRequired,
@@ -435,6 +446,7 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error("ServiceCard Error:", error, errorInfo.componentStack);
+    // Log to error monitoring service (e.g., Sentry)
   }
 
   render() {
