@@ -3,8 +3,6 @@
 
 import { motion } from "framer-motion";
 import { ShieldCheck, Leaf, History, Users, ChevronRight } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -68,8 +66,6 @@ const team = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <motion.main
         initial="hidden"
         animate="visible"
@@ -82,7 +78,7 @@ export default function AboutPage() {
             <motion.div variants={fadeInUp}>
               <h1 className="text-4xl sm:text-5xl font-bold mb-4">
                 <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
-                  About CleanPro
+                  About Melostra
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
@@ -104,7 +100,9 @@ export default function AboutPage() {
                 className="p-6 rounded-xl bg-blue-50"
               >
                 <ShieldCheck className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Certified Expertise</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">
+                  Certified Expertise
+                </h3>
                 <p className="text-gray-600">
                   Fully licensed and green-certified professionals
                 </p>
@@ -115,7 +113,9 @@ export default function AboutPage() {
                 className="p-6 rounded-xl bg-blue-50"
               >
                 <Leaf className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Eco Commitment</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">
+                  Eco Commitment
+                </h3>
                 <p className="text-gray-600">
                   100% biodegradable and non-toxic solutions
                 </p>
@@ -126,7 +126,9 @@ export default function AboutPage() {
                 className="p-6 rounded-xl bg-blue-50"
               >
                 <Users className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Community Focus</h3>
+                <h3 className="text-xl font-bold mb-2 text-black">
+                  Community Focus
+                </h3>
                 <p className="text-gray-600">
                   Locally owned, serving 50+ neighborhoods
                 </p>
@@ -140,7 +142,7 @@ export default function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.h2
               variants={fadeInUp}
-              className="text-3xl font-bold text-center mb-12"
+              className="text-3xl font-bold text-center mb-12 text-black"
             >
               Our Journey
             </motion.h2>
@@ -158,7 +160,9 @@ export default function AboutPage() {
                   >
                     {index % 2 === 0 && (
                       <div className="p-4 bg-white rounded-lg shadow-md">
-                        <h4 className="font-bold text-lg">{item.title}</h4>
+                        <h4 className="font-bold text-lg text-black">
+                          {item.title}
+                        </h4>
                         <p className="text-gray-600">{item.description}</p>
                       </div>
                     )}
@@ -189,7 +193,7 @@ export default function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.h2
               variants={fadeInUp}
-              className="text-3xl font-bold text-center mb-12"
+              className="text-3xl font-bold text-center mb-12 text-black"
             >
               Meet Our Team
             </motion.h2>
@@ -205,7 +209,9 @@ export default function AboutPage() {
                   className="bg-blue-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow"
                 >
                   <div className="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-1">{member.name}</h3>
+                  <h3 className="text-xl font-bold mb-1 text-black">
+                    {member.name}
+                  </h3>
                   <p className="text-blue-600 mb-2">{member.role}</p>
                   <p className="text-gray-600">{member.bio}</p>
                 </motion.div>
@@ -246,8 +252,6 @@ export default function AboutPage() {
           </div>
         </section>
       </motion.main>
-
-      <Footer />
     </div>
   );
 }

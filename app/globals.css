@@ -8,6 +8,20 @@
   --foreground: #171717;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding-top: 0;
+}
+
+/* Mobile menu overlay */
+[aria-modal="true"] {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -47,4 +61,22 @@ body {
 }
 .hover-underline:hover::after {
   width: 100%;
+}
+
+.clip-triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }

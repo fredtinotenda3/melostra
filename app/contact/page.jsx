@@ -5,8 +5,6 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Clock, ChevronRight } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -73,8 +71,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <motion.main
         initial="hidden"
         animate="visible"
@@ -95,10 +91,10 @@ export default function ContactPage() {
               <p className="text-xs xs:text-sm sm:text-sm">
                 Call Now:{" "}
                 <a
-                  href="tel:+18005551234"
+                  href="tel:+263719153221"
                   className="font-semibold hover:text-blue-200"
                 >
-                  1-800-555-1234
+                  +263-71-915-3221
                 </a>
               </p>
             </div>
@@ -113,7 +109,7 @@ export default function ContactPage() {
               variants={fadeInUp}
               className="text-center mb-8 sm:mb-16"
             >
-              <h1 className="text-2xl xs:text-3xl sm:text-4xl font-bold mb-2 sm:mb-4">
+              <h1 className="text-2xl xs:text-3xl sm:text-4xl font-bold mb-2 sm:mb-4 text-black">
                 Get in Touch
               </h1>
               <p className="text-gray-600 text-xs xs:text-sm sm:text-base max-w-2xl mx-auto">
@@ -136,7 +132,7 @@ export default function ContactPage() {
                       <Phone className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="text-base sm:text-xl font-semibold">
+                      <h3 className="text-base sm:text-xl font-semibold text-black">
                         Contact
                       </h3>
                       <p className="text-gray-600 text-xs sm:text-sm">
@@ -148,19 +144,19 @@ export default function ContactPage() {
                     <li className="flex items-center gap-1 sm:gap-2">
                       <Phone className="w-3 h-3 sm:w-5 sm:h-5 text-gray-500" />
                       <a
-                        href="tel:+18005551234"
-                        className="text-xs sm:text-sm hover:text-blue-600"
+                        href="tel: +263785391860"
+                        className="text-xs sm:text-sm hover:text-blue-600 text-black"
                       >
-                        1-800-555-1234
+                        +263-71-915-3221
                       </a>
                     </li>
                     <li className="flex items-center gap-1 sm:gap-2">
                       <Mail className="w-3 h-3 sm:w-5 sm:h-5 text-gray-500" />
                       <a
                         href="mailto:contact@cleanpro.com"
-                        className="text-xs sm:text-sm hover:text-blue-600"
+                        className="text-xs sm:text-sm hover:text-blue-600 text-black"
                       >
-                        contact@cleanpro.com
+                        melostrachaparadza@icloud.com
                       </a>
                     </li>
                   </ul>
@@ -172,7 +168,7 @@ export default function ContactPage() {
                       <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="text-base sm:text-xl font-semibold">
+                      <h3 className="text-base sm:text-xl font-semibold text-black">
                         Location
                       </h3>
                       <p className="text-gray-600 text-xs sm:text-sm">
@@ -201,7 +197,7 @@ export default function ContactPage() {
                       <Clock className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="text-base sm:text-xl font-semibold">
+                      <h3 className="text-base sm:text-xl font-semibold text-black">
                         Hours
                       </h3>
                       <p className="text-gray-600 text-xs sm:text-sm">
@@ -245,7 +241,7 @@ export default function ContactPage() {
                   className="bg-white p-3 sm:p-6 rounded-lg sm:rounded-xl shadow-sm sm:shadow-md space-y-4 sm:space-y-6"
                 >
                   <div>
-                    <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2">
+                    <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2 text-black">
                       Full Name *
                     </label>
                     <input
@@ -262,7 +258,7 @@ export default function ContactPage() {
 
                   <div className="grid grid-cols-1 gap-2 sm:gap-6">
                     <div>
-                      <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2">
+                      <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2 text-black">
                         Email *
                       </label>
                       <input
@@ -279,7 +275,7 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2">
+                      <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2 text-black">
                         Phone *
                       </label>
                       <input
@@ -296,7 +292,7 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2">
+                    <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2 text-black">
                       Service Type *
                     </label>
                     <select
@@ -312,7 +308,7 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2">
+                    <label className="block text-xs xs:text-sm font-medium mb-1 sm:mb-2 text-black">
                       Message *
                     </label>
                     <textarea
@@ -407,8 +403,6 @@ export default function ContactPage() {
           </motion.div>
         </div>
       </motion.main>
-
-      <Footer />
     </div>
   );
 }

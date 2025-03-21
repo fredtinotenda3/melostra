@@ -1,297 +1,390 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import {
-  CheckCircle2,
-  ShoppingCart,
-  X,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import Link from "next/link";
 import Image from "next/image";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { products } from "@/constants";
+import { Sparkles, Bug, Car, ChevronRight, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
-const ProductModal = ({ product, onClose }) => {
+interface ServiceCategory {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  icon: any;
+  highlightColor: string;
+  services: string[];
+}
+
+const serviceCategories: ServiceCategory[] = [
+  {
+    id: "cleaning",
+    title: "Professional Cleaning",
+    description: "Comprehensive solutions for homes & businesses",
+    image: "/assets/images/cleaning-hero.jpg",
+    icon: Sparkles,
+    highlightColor: "bg-blue-600",
+    services: [
+      "Home Cleaning",
+      "Floor Care",
+      "Pool Maintenance",
+      "Deep Cleaning",
+      "Commercial Cleaning",
+    ],
+  },
+  {
+    id: "pest-control",
+    title: "Pest Control",
+    description: "Effective elimination & prevention",
+    image: "/assets/images/pest-control-hero.jpg",
+    icon: Bug,
+    highlightColor: "bg-emerald-600",
+    services: [
+      "General Pest Control",
+      "Termite Treatment",
+      "Rodent Control",
+      "Bed Bug Removal",
+      "Commercial Fumigation",
+    ],
+  },
+  {
+    id: "car-cleaning",
+    title: "Car Cleaning",
+    description: "Premium automotive care solutions",
+    image: "/assets/images/car-cleaning-hero.jpg",
+    icon: Car,
+    highlightColor: "bg-orange-600",
+    services: [
+      "Interior Detailing",
+      "Exterior Wash & Wax",
+      "Engine Cleaning",
+      "Leather Conditioning",
+      "Odor Removal",
+    ],
+  },
+];
+
+const ServiceCard = ({ category }: { category: ServiceCategory }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const rotateX = useTransform(y, [0, 300], [3, -3]);
+  const rotateY = useTransform(x, [0, 300], [-3, 3]);
+
+  useEffect(() => {
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isTouchDevice) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set(event.clientX - rect.left);
+    y.set(event.clientY - rect.top);
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={onClose}
+      initial="rest"
+      whileHover={!isTouchDevice ? "hover" : "rest"}
+      animate={isHovered && !isTouchDevice ? "hover" : "rest"}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
+      onMouseLeave={() => !isTouchDevice && setIsHovered(false)}
+      style={{
+        rotateX: !isTouchDevice ? rotateX : 0,
+        rotateY: !isTouchDevice ? rotateY : 0,
+        transformPerspective: 1000,
+      }}
+      className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
     >
+      {!isTouchDevice && (
+        <motion.div
+          className="absolute inset-0 bg-gradient-radial from-transparent via-black/20 to-black/40"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+        />
+      )}
+
       <motion.div
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        className="bg-white rounded-xl max-w-4xl w-full p-6 flex flex-col lg:flex-row gap-6"
-        onClick={(e) => e.stopPropagation()}
+        className="relative aspect-square sm:aspect-[1.8] lg:aspect-[2/1]"
+        whileHover={{ scale: !isTouchDevice ? 1.05 : 1 }}
       >
-        <div className="w-full lg:w-1/2 relative h-64">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className="object-contain"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            priority
-          />
-        </div>
-
-        <div className="w-full lg:w-1/2 space-y-4 overflow-y-auto max-h-[80vh]">
-          <div className="flex justify-between items-start">
-            <h2 className="text-2xl font-bold">{product.name}</h2>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full"
-              aria-label="Close modal"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-
-          <p className="text-gray-600">{product.description}</p>
-
-          <div className="text-xl font-bold text-blue-600">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(product.price)}
-          </div>
-
-          <ul className="space-y-2">
-            {product.features.map((feature, index) => (
-              <li key={index} className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-
-          <button
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-            aria-label={`Add ${product.name} to cart`}
-          >
-            <ShoppingCart className="w-5 h-5" />
-            Add to Cart
-          </button>
-        </div>
+        <Image
+          src={category.image}
+          alt={category.title}
+          fill
+          className="object-cover transition-transform duration-300"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/40" />
       </motion.div>
+
+      <div className="absolute inset-0 p-4 flex flex-col justify-end">
+        <motion.div
+          className={`${category.highlightColor} p-4 rounded-xl backdrop-blur-sm bg-opacity-90`}
+          initial={{ y: 20 }}
+          animate={{ y: 0 }}
+          transition={{ type: "spring" }}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <motion.div
+              animate={
+                !isTouchDevice
+                  ? { rotate: isHovered ? [0, 15, -15, 0] : 0 }
+                  : {}
+              }
+              transition={{ duration: 0.5 }}
+            >
+              <category.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            </motion.div>
+            <h2 className="text-sm sm:text-base lg:text-lg font-bold text-white">
+              {category.title}
+            </h2>
+          </div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-xs sm:text-sm text-white/90 mb-2"
+          >
+            {category.description}
+          </motion.p>
+
+          <motion.div className="overflow-hidden relative h-6 mb-2">
+            <div className="absolute inset-0 flex items-center space-x-2 animate-marquee whitespace-nowrap">
+              {[...category.services, ...category.services].map(
+                (service, index) => (
+                  <motion.span
+                    key={`${service}-${index}`}
+                    className="text-xs px-2 py-1 bg-white/10 rounded-full text-white/80"
+                    whileHover={!isTouchDevice ? { scale: 1.05 } : {}}
+                  >
+                    {service}
+                  </motion.span>
+                )
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div whileHover={!isTouchDevice ? { x: 5 } : {}}>
+            <Link
+              href={`/services/${category.id}`}
+              className="inline-flex items-center gap-1 text-xs sm:text-sm font-medium text-white hover:text-white/80"
+              aria-label={`Explore ${category.title} services`}
+            >
+              Explore Services
+              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 };
 
-const ProductCard = ({ product }) => {
-  const [selectedProduct, setSelectedProduct] = useState(null);
-
-  return (
-    <>
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="bg-white rounded-xl shadow-lg overflow-hidden"
-      >
-        <div
-          className="relative h-64 cursor-pointer"
-          onClick={() => setSelectedProduct(product)}
-          role="button"
-          aria-label={`View details for ${product.name}`}
-        >
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform duration-300 hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        </div>
-
-        <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-            {product.description}
-          </p>
-          <div className="flex justify-between items-center">
-            <span className="text-blue-600 font-bold">
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(product.price)}
-            </span>
-            <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
-              {product.category}
-            </span>
-          </div>
-        </div>
-      </motion.div>
-
-      <AnimatePresence>
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-          />
-        )}
-      </AnimatePresence>
-    </>
-  );
-};
-
-const Carousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const items = [
-    {
-      src: "/assets/images/featured1.jpg",
-      alt: "Professional cleaning equipment",
-    },
-    {
-      src: "/assets/images/featured6.jpg",
-      alt: "Eco-friendly cleaning products",
-    },
-    {
-      src: "/assets/images/featured4.jpg",
-      alt: "Industrial cleaning tools",
-    },
-  ];
+export default function ServicesPage() {
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [isHoveringCard, setIsHoveringCard] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
-    if (!isHovered) {
-      const interval = setInterval(handleNext, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [currentIndex, isHovered]);
-
-  const handleNext = () => {
-    setDirection("next");
-    setCurrentIndex((prev) => (prev === items.length - 1 ? 0 : prev + 1));
-  };
-
-  const handlePrev = () => {
-    setDirection("prev");
-    setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
-  };
-
-  const variants = {
-    initial: (direction) => ({
-      opacity: 0,
-      scale: direction === "next" ? 0.95 : 1.05,
-    }),
-    animate: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.3 },
-    },
-    exit: (direction) => ({
-      opacity: 0,
-      scale: direction === "next" ? 1.05 : 0.95,
-      transition: { duration: 0.3 },
-    }),
-  };
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   return (
     <div
-      className="relative w-full overflow-hidden h-48 sm:h-56 lg:h-64"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="min-h-screen bg-gray-50 pt-8"
+      onMouseMove={
+        !isTouchDevice
+          ? (e) => setCursorPos({ x: e.clientX, y: e.clientY })
+          : undefined
+      }
     >
-      <AnimatePresence mode="wait" custom={direction}>
+      {!isTouchDevice && isHoveringCard && (
         <motion.div
-          key={currentIndex}
-          custom={direction}
-          variants={variants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="absolute w-full h-full flex items-center justify-center bg-gray-100"
+          className="fixed w-8 h-8 border-2 border-white rounded-full pointer-events-none"
+          style={{
+            x: cursorPos.x - 16,
+            y: cursorPos.y - 16,
+          }}
+          animate={{
+            scale: [1, 0.9, 1],
+            opacity: [0.8, 1, 0.8],
+          }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+        />
+      )}
+
+      <style jsx global>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+        @media (max-width: 640px) {
+          .animate-marquee {
+            animation-duration: 25s;
+          }
+        }
+        @media (hover: none) {
+          .animate-marquee {
+            animation: none;
+          }
+        }
+      `}</style>
+
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="max-w-3xl mx-auto text-center mb-8">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2"
+          >
+            Transform Your Space
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-sm sm:text-base text-gray-600"
+          >
+            Premium cleaning and pest control solutions tailored to your needs
+          </motion.p>
+        </div>
+
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          onMouseEnter={
+            !isTouchDevice ? () => setIsHoveringCard(true) : undefined
+          }
+          onMouseLeave={
+            !isTouchDevice ? () => setIsHoveringCard(false) : undefined
+          }
         >
-          <Image
-            src={items[currentIndex].src}
-            alt={items[currentIndex].alt}
-            fill
-            className="object-contain p-4"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority={currentIndex === 0}
-          />
+          {serviceCategories.map((category) => (
+            <ServiceCard key={category.id} category={category} />
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-12 bg-gray-900 rounded-xl p-6 text-center"
+        >
+          <h3 className="text-xl font-semibold text-white mb-4">
+            Need Expert Guidance?
+          </h3>
+          <p className="text-sm text-gray-300 mb-4 max-w-md mx-auto">
+            Our certified professionals will assess your space and recommend the
+            perfect solution
+          </p>
+          <Link
+            href="/contact"
+            className="inline-block bg-white text-gray-900 px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+            aria-label="Schedule free consultation"
+          >
+            Schedule Free Consultation
+          </Link>
         </motion.div>
-      </AnimatePresence>
 
-      <button
-        onClick={handlePrev}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-      <button
-        onClick={handleNext}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition-colors"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-12 bg-white rounded-xl p-8 shadow-lg"
+        >
+          <h3 className="text-xl sm:text-2xl font-bold text-center mb-8">
+            Our 4-Step Process
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            {[
+              { title: "Consultation", content: "Free assessment" },
+              { title: "Planning", content: "Customized plan" },
+              { title: "Execution", content: "Professional work" },
+              { title: "Follow-up", content: "Quality check" },
+            ].map((step, index) => (
+              <div key={index} className="text-center">
+                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl mb-3 mx-auto">
+                  {index + 1}
+                </div>
+                <h4 className="text-base sm:text-lg font-semibold mb-2">
+                  {step.title}
+                </h4>
+                <p className="text-sm text-gray-600">{step.content}</p>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-12 bg-white rounded-xl p-6 shadow-lg"
+        >
+          <h3 className="text-xl sm:text-2xl font-bold text-center mb-6">
+            Service Packages
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Basic",
+                price: 99,
+                features: [
+                  "Weekly Cleaning",
+                  "Surface Disinfection",
+                  "Equipment",
+                ],
+              },
+              {
+                name: "Premium",
+                price: 199,
+                features: [
+                  "Bi-weekly Cleaning",
+                  "Deep Disinfection",
+                  "Eco Products",
+                ],
+              },
+              {
+                name: "Commercial",
+                price: 299,
+                features: [
+                  "Daily Cleaning",
+                  "Industrial Equipment",
+                  "24/7 Support",
+                ],
+              },
+            ].map((pkg, index) => (
+              <div key={index} className="bg-white p-6 rounded-xl shadow-md">
+                <div className="text-center mb-4">
+                  <h4 className="text-lg font-bold mb-2">{pkg.name}</h4>
+                  <div className="text-2xl font-bold text-blue-600">
+                    ${pkg.price}
+                    <span className="text-lg text-gray-500">/mo</span>
+                  </div>
+                </div>
+                <ul className="space-y-2 mb-4">
+                  {pkg.features.map((feature, fIndex) => (
+                    <li key={fIndex} className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button className="w-full bg-blue-100 text-blue-600 py-2 rounded-lg hover:bg-blue-200 text-sm">
+                  Choose Plan
+                </button>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+      </section>
     </div>
-  );
-};
-
-export default function ProductsPage() {
-  const categories = useMemo(
-    () => [...new Set(products.map((product) => product.category))],
-    []
-  );
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  const filteredProducts = useMemo(() => {
-    if (!selectedCategory) return products;
-    return products.filter((product) => product.category === selectedCategory);
-  }, [selectedCategory]);
-
-  return (
-    <>
-      <Header />
-      <Carousel />
-      <main className="min-h-screen bg-gray-50">
-        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-8">Our Products</h1>
-
-          <div className="flex flex-wrap gap-2 mb-8 justify-center">
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                !selectedCategory
-                  ? "bg-blue-600 text-white"
-                  : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-              }`}
-              aria-label="Show all products"
-            >
-              All Products
-            </button>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${
-                  selectedCategory === category
-                    ? "bg-blue-600 text-white"
-                    : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-                }`}
-                aria-label={`Filter by ${category}`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </>
   );
 }

@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { CartProvider } from "@/src/context/CartContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Melostra",
-  description: "Melostra is a cleaning service company",
+  title: "CleanPro - Professional Cleaning Services",
+  description: "Your trusted partner for cleaning and pest control services",
 };
 
 export default function RootLayout({
@@ -24,10 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={inter.className}>
+        <CartProvider>
+          <Header />
+          <main className="min-h-[calc(100vh-160px)]">{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

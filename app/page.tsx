@@ -21,9 +21,8 @@ import { motion } from "framer-motion";
 import { JSX, useEffect, useState } from "react";
 import Image from "next/image";
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import { carouselItems, home_products, serviceCategories } from "@/constants";
+import { div } from "framer-motion/client";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -306,87 +305,87 @@ const WhyChooseUsMarquee = () => {
 
 const Home = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <Carousel items={carouselItems} />
+    <div>
+      <div className="min-h-screen flex flex-col mt-0">
+        <Carousel items={carouselItems} />
 
-      <motion.section
-        className="container mx-auto py-16 px-4 sm:px-6 lg:px-8"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
-        viewport={{ once: true, margin: "100px" }}
-      >
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Our Cleaning Services
-        </h2>
-        <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {serviceCategories.map((service) => (
-            <ServiceCard key={service.id} service={service} />
-          ))}
-        </motion.div>
-      </motion.section>
-
-      <motion.section
-        className="bg-gray-50 py-16"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
-        viewport={{ once: true, margin: "100px" }}
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.section
+          className="container mx-auto py-16 px-4 sm:px-6 lg:px-8"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          viewport={{ once: true, margin: "100px" }}
+        >
           <h2 className="text-3xl font-bold text-center mb-12">
-            Featured Products
+            Our Cleaning Services
           </h2>
-          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {home_products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {serviceCategories.map((service) => (
+              <ServiceCard key={service.id} service={service} />
             ))}
           </motion.div>
-        </div>
-      </motion.section>
+        </motion.section>
 
-      <motion.section
-        className="relative h-[500px] flex items-center justify-center text-center"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        <Image
-          src="/assets/images/pest-free.jpg"
-          alt="Professional cleaning team"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="relative z-10 max-w-2xl mx-auto p-6 bg-white/70 backdrop-blur-md rounded-xl shadow-lg">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
-            Experience the Clean Difference
-          </h2>
-          <p className="text-lg sm:text-xl mb-8 text-gray-800">
-            Combine our expert services with premium products for unparalleled
-            results
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/services"
-              className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg hover:bg-blue-600 hover:text-white transition-colors text-lg font-medium"
-            >
-              Schedule Service
-            </Link>
-            <Link
-              href="/products"
-              className="border-2 border-green-600 text-green-600 px-8 py-4 rounded-lg hover:bg-green-600 hover:text-white transition-colors text-lg font-medium"
-            >
-              Browse Products
-            </Link>
+        <motion.section
+          className="bg-gray-50 py-16"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          viewport={{ once: true, margin: "100px" }}
+        >
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Featured Products
+            </h2>
+            <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {home_products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </motion.div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
 
-      <WhyChooseUsMarquee />
-      <Footer />
+        <motion.section
+          className="relative h-[500px] flex items-center justify-center text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <Image
+            src="/assets/images/pest-free.jpg"
+            alt="Professional cleaning team"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="relative z-10 max-w-2xl mx-auto p-6 bg-white/70 backdrop-blur-md rounded-xl shadow-lg">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-gray-900">
+              Experience the Clean Difference
+            </h2>
+            <p className="text-lg sm:text-xl mb-8 text-gray-800">
+              Combine our expert services with premium products for unparalleled
+              results
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/services"
+                className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg hover:bg-blue-600 hover:text-white transition-colors text-lg font-medium"
+              >
+                Schedule Service
+              </Link>
+              <Link
+                href="/products"
+                className="border-2 border-green-600 text-green-600 px-8 py-4 rounded-lg hover:bg-green-600 hover:text-white transition-colors text-lg font-medium"
+              >
+                Browse Products
+              </Link>
+            </div>
+          </div>
+        </motion.section>
+
+        <WhyChooseUsMarquee />
+      </div>
     </div>
   );
 };

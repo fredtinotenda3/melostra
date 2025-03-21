@@ -10,11 +10,22 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { useCart } from "@/src/context/CartContext";
 import { products } from "@/constants";
 
 const ProductModal = ({ product, onClose }) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+    onClose();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -71,8 +82,8 @@ const ProductModal = ({ product, onClose }) => {
           </ul>
 
           <button
+            onClick={handleAddToCart}
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-            aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingCart className="w-5 h-5" />
             Add to Cart
@@ -108,7 +119,9 @@ const ProductCard = ({ product }) => {
         </div>
 
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+          <h3 className="text-lg font-semibold mb-2 text-black">
+            {product.name}
+          </h3>
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">
             {product.description}
           </p>
@@ -250,11 +263,12 @@ export default function ProductsPage() {
 
   return (
     <>
-      <Header />
       <Carousel />
       <main className="min-h-screen bg-gray-50">
         <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-8">Our Products</h1>
+          <h1 className="text-4xl font-bold text-center mb-8 text-black">
+            Our Products
+          </h1>
 
           <div className="flex flex-wrap gap-2 mb-8 justify-center">
             <button
@@ -291,7 +305,6 @@ export default function ProductsPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

@@ -1,0 +1,275 @@
+"use client";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import {
+  Car,
+  Droplets,
+  Sparkles,
+  Shield,
+  Zap,
+  Bug,
+  CircleDashed,
+} from "lucide-react";
+
+const CarCleaningPage = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref });
+
+  // Multiple animation transforms
+  const x = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 15]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
+
+  // Car floating animation
+  const floatingCar = {
+    initial: { y: 0 },
+    animate: {
+      y: [0, -20, 0],
+      x: [0, 20, -20, 0],
+      rotate: [0, 5, -5, 0],
+      transition: {
+        duration: 8,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  // Water droplet animation
+  const droplet = {
+    initial: { y: -100, opacity: 0 },
+    animate: (i: number) => ({
+      y: [0, window.innerHeight + 100],
+      x: [0, (Math.random() - 0.5) * 200],
+      opacity: [1, 0],
+      transition: {
+        delay: i * 0.5,
+        duration: Math.random() * 3 + 2,
+        repeat: Infinity,
+        ease: "linear",
+      },
+    }),
+  };
+
+  return (
+    <div
+      className="min-h-screen bg-gradient-to-b from-blue-50 to-white"
+      ref={ref}
+    >
+      {/* Animated Water Droplets Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {[...Array(30)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-blue-200"
+            style={{
+              left: `${Math.random() * 100}%`,
+              fontSize: `${Math.random() * 2 + 1}rem`,
+            }}
+            variants={droplet}
+            initial="initial"
+            animate="animate"
+            custom={i}
+          >
+            <Droplets />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Floating Cars Section */}
+      <motion.section
+        className="relative h-screen flex items-center justify-center overflow-hidden"
+        style={{ scale, rotate }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center">
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute text-blue-100/20"
+              style={{
+                scale: 1 - i * 0.2,
+                rotate: i * 15,
+                x: x,
+              }}
+            >
+              <Car className="w-48 h-48" />
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          className="relative z-20 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <motion.div
+            variants={floatingCar}
+            initial="initial"
+            animate="animate"
+            className="mb-8"
+          >
+            <Car className="w-24 h-24 mx-auto text-blue-600" />
+          </motion.div>
+          <motion.h1
+            className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent"
+            animate={{
+              letterSpacing: ["0em", "0.1em", "0em"],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
+          >
+            Ultimate Car Spa Experience
+          </motion.h1>
+        </motion.div>
+      </motion.section>
+
+      {/* Interactive Service Showcase */}
+      <section className="relative z-10 py-20 px-4">
+        <div className="max-w-6xl mx-auto grid gap-12 md:grid-cols-3">
+          {[
+            {
+              title: "Exterior Detailing",
+              icon: Sparkles,
+              services: ["Hand Wash", "Ceramic Coating", "Paint Correction"],
+            },
+            {
+              title: "Interior Care",
+              icon: Shield,
+              services: ["Deep Cleaning", "Leather Treatment", "Odor Removal"],
+            },
+            {
+              title: "Specialized",
+              icon: Zap,
+              services: [
+                "Engine Detailing",
+                "Undercarriage Wash",
+                "Headlight Restoration",
+              ],
+            },
+          ].map((service, index) => (
+            <motion.div
+              key={service.title}
+              className="p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-blue-50"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+              transition={{ delay: index * 0.2 }}
+            >
+              <motion.div
+                className="mb-6"
+                animate={{
+                  rotate: [0, 15, -15, 0],
+                  y: [0, -10, 10, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                }}
+              >
+                <service.icon className="w-12 h-12 mx-auto text-blue-600" />
+              </motion.div>
+              <h2 className="text-2xl font-bold mb-6 text-center">
+                {service.title}
+              </h2>
+              <div className="space-y-4">
+                {service.services.map((item, i) => (
+                  <motion.div
+                    key={item}
+                    className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.span
+                      className="w-2 h-2 bg-blue-600 rounded-full"
+                      animate={{ scale: [1, 1.5, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.2,
+                      }}
+                    />
+                    <span className="text-gray-700">{item}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Animated Transformation Section */}
+      <motion.section
+        className="h-screen flex items-center justify-center bg-slate-900 relative overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+      >
+        <div className="absolute inset-0 flex justify-between items-center px-16 opacity-20">
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="text-blue-400/20"
+              animate={{
+                scale: [1, 1.5, 1],
+                rotate: [0, 180],
+              }}
+              transition={{
+                duration: 8 + i * 2,
+                repeat: Infinity,
+              }}
+            >
+              <Car className="w-48 h-48" />
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="relative z-10 text-center">
+          <motion.div
+            className="mb-8"
+            animate={{
+              filter: [
+                "brightness(1) contrast(1)",
+                "brightness(1.2) contrast(1.1)",
+                "brightness(1) contrast(1)",
+              ],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+            }}
+          >
+            <div className="inline-block p-8 bg-white/10 backdrop-blur-sm rounded-2xl">
+              <Car className="w-48 h-48 text-emerald-400" />
+            </div>
+          </motion.div>
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Before & After Magic
+          </h2>
+          <motion.div
+            className="h-1 bg-white/20 rounded-full mb-8 mx-auto max-w-md"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            transition={{ duration: 2 }}
+          >
+            <motion.div
+              className="h-full bg-emerald-400 rounded-full origin-left"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: [0, 1, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
+          </motion.div>
+          <motion.button
+            className="bg-emerald-400 text-slate-900 px-8 py-4 rounded-full text-lg font-bold hover:bg-emerald-300 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Start Your Transformation
+          </motion.button>
+        </div>
+      </motion.section>
+    </div>
+  );
+};
+
+export default CarCleaningPage;

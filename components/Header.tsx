@@ -1,146 +1,170 @@
-// components/Header.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
+import { ShoppingCart, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useCart } from "@/src/context/CartContext";
+import { motion, AnimatePresence } from "framer-motion";
 
-type NavLink = {
-  name: string;
-  path: string;
-};
-
-const Header: React.FC = () => {
+const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { cartCount } = useCart();
   const pathname = usePathname();
+  const headerHeight = 68;
 
-  const navLinks: NavLink[] = [
-    { name: "Home", path: "/" },
-    { name: "Services", path: "/services" },
-    { name: "Products", path: "/products" },
-    { name: "Booking", path: "/booking" },
-    { name: "About Us", path: "/about" },
-    { name: "Contact", path: "/contact" },
-  ];
-
+  // Scroll effect
   useEffect(() => {
-    const handleScroll = () => setHasScrolled(window.scrollY > 50);
-    const handleResize = () => window.innerWidth >= 768 && setIsOpen(false);
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Reset mobile menu and set CSS variable
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+    setIsOpen(false);
+    document.documentElement.style.setProperty(
+      "--header-height",
+      `${headerHeight}px`
+    );
+  }, [pathname]);
+
+  const navLinks = [
+    ["Services", "/services"],
+    ["Products", "/products"],
+    ["Booking", "/booking"],
+    ["About", "/about"],
+    ["Contact", "/contact"],
+  ];
+
+  const isActive = (path: string) =>
+    pathname === path
+      ? "text-blue-300 font-medium"
+      : "text-white hover:text-blue-300";
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        hasScrolled ? "bg-blue-900 shadow-lg" : "bg-transparent"
+      className={`bg-blue-900 fixed inset-x-0 top-0 z-50 transition-shadow duration-300 ${
+        isScrolled ? "shadow-lg" : "shadow-sm"
       }`}
+      style={{ height: headerHeight }}
     >
-      <div className="container mx-auto px-2 xs:px-4 sm:px-6 h-full">
-        <div className="flex justify-between items-center h-14 sm:h-16 relative">
+      <div className="container mx-auto px-4 h-full">
+        <div className="flex justify-between items-center h-full">
           <Link
             href="/"
-            className="flex items-center gap-1 xs:gap-2"
-            aria-label="Home"
+            className="text-2xl font-bold text-white hover:scale-105 transition-transform duration-200 hover:text-blue-200 relative"
           >
-            <Image
-              src="/logo.png"
-              alt="Melostra Logo"
-              width={32}
-              height={32}
-              className="h-8 w-8 xs:h-10 xs:w-10"
-              priority
-              sizes="(max-width: 183px) 32px, 40px"
+            CleanPro
+            <motion.span
+              className="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-300"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: pathname === "/" ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
             />
-            <span
-              className={`text-xl xs:text-2xl font-bold ${
-                hasScrolled ? "text-white" : "text-black"
-              }`}
-            >
-              Melostra
-            </span>
           </Link>
 
-          <nav className="hidden md:flex space-x-2 xs:space-x-4 sm:space-x-6">
-            {navLinks.map((link) => (
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-4 h-full">
+            {navLinks.map(([name, path]) => (
               <Link
-                key={link.path}
-                href={link.path}
-                className={`px-2 xs:px-3 py-1 xs:py-2 rounded-md text-xs xs:text-sm font-medium transition-colors ${
-                  pathname === link.path
-                    ? "bg-blue-800 text-white"
-                    : `${
-                        hasScrolled
-                          ? "text-white hover:bg-blue-800"
-                          : "text-black hover:bg-blue-100"
-                      }`
-                }`}
-                aria-current={pathname === link.path ? "page" : undefined}
+                key={path}
+                href={path}
+                className={`group relative flex flex-col justify-center h-full px-3 ${isActive(
+                  path
+                )}`}
               >
-                {link.name}
+                <motion.span
+                  className="relative z-10"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  {name}
+                </motion.span>
+                <motion.div
+                  className="absolute bottom-3 left-3 right-3 h-[2px] bg-blue-300 origin-left"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: pathname === path ? 1 : 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                />
               </Link>
             ))}
+            <Link
+              href="/cart"
+              className={`flex items-center gap-2 ${isActive(
+                "/cart"
+              )} hover:text-blue-200 transition-colors`}
+              aria-label={`Cart: ${cartCount} items`}
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative"
+              >
+                <ShoppingCart className="w-5 h-5 text-white" />
+                {cartCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-2 -right-2"
+                  >
+                    <span className="bg-blue-300 text-blue-900 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium shadow-sm hover:bg-blue-200 transition-colors">
+                      {cartCount}
+                    </span>
+                  </motion.span>
+                )}
+              </motion.div>
+            </Link>
           </nav>
 
-          <button
-            className={`md:hidden p-1 xs:p-2 ${
-              hasScrolled ? "text-white" : "text-black"
-            } hover:text-blue-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
+          {/* Mobile Menu Button */}
+          <motion.button
             onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isOpen}
+            className="md:hidden p-2 text-white hover:text-blue-300 transition-colors rounded-lg hover:bg-blue-800"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {isOpen ? (
-              <X className="h-5 w-5 xs:h-6 xs:w-6" aria-hidden="true" />
-            ) : (
-              <Menu className="h-5 w-5 xs:h-6 xs:w-6" aria-hidden="true" />
-            )}
-          </button>
-
-          <div
-            className={`md:hidden absolute top-full left-0 w-full bg-blue-900 transition-all duration-300 overflow-hidden ${
-              isOpen ? "max-h-96" : "max-h-0"
-            }`}
-            aria-hidden={!isOpen}
-          >
-            <nav className="px-1 xs:px-2 pt-1 xs:pt-2 pb-2 xs:pb-3 space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  href={link.path}
-                  className={`block px-2 xs:px-3 py-1 xs:py-2 rounded-md text-sm xs:text-base font-medium ${
-                    pathname === link.path
-                      ? "bg-blue-800 text-white"
-                      : "text-white hover:bg-blue-800"
-                  }`}
-                  aria-current={pathname === link.path ? "page" : undefined}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </motion.button>
         </div>
+
+        {/* Mobile Navigation */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="md:hidden absolute inset-x-0 bg-blue-900 shadow-lg"
+              style={{ top: headerHeight }}
+            >
+              <nav className="flex flex-col gap-2 text-white p-4 border-t border-blue-700">
+                {[...navLinks, ["Cart", "/cart"]].map(([name, path]) => (
+                  <Link
+                    key={path}
+                    href={path}
+                    className={`text-lg px-4 py-3 rounded-lg ${isActive(
+                      path
+                    )} flex items-center justify-between hover:bg-blue-800 transition-colors`}
+                  >
+                    <motion.span
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      {name}
+                    </motion.span>
+                    {path === "/cart" && (
+                      <span className="bg-blue-300 text-blue-900 rounded-full w-6 h-6 flex items-center justify-center text-sm">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
