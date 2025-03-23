@@ -516,10 +516,10 @@ export default function ProfessionalCleaningPage() {
   return (
     <ServicesLayout>
       <div
-        className="min-h-screen pt-16"
+        className="min-h-screen "
         style={{ background: brandColors.neutral }}
       >
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 ">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
