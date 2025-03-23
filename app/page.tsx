@@ -114,13 +114,15 @@ const Carousel = ({ items }: { items: CarouselItem[] }) => {
               background: "rgba(0,0,0,0.4)",
             }}
           >
-            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 bg-black/60" />
             <Image
               src={item.image}
               alt={item.title}
               fill
               className="object-cover object-center"
-              priority={index < 2}
+              priority={index === 0} // Load only first image eagerly
+              quality={80} // Reduce image quality
+              sizes="(max-width: 768px) 100vw, 50vw"
               onLoadingComplete={() => handleImageLoad(index)}
               style={{
                 opacity: loadedImages[index] ? 1 : 0,

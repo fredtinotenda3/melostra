@@ -292,7 +292,7 @@ export default function ServicesPage() {
         title: "Professional Cleaning",
         description:
           "Comprehensive residential & commercial cleaning solutions",
-        image: "/assets/images/cleaning-hero.jpg",
+        image: "/assets/images/general-2.jpg",
         icon: Sparkles,
         services: [
           "Deep Cleaning",

@@ -67,11 +67,13 @@ const floatEffect = {
 };
 
 // ======== CLEANING CATEGORIES ========
+// ======== CLEANING CATEGORIES ========
 const cleaningCategories: CleaningCategory[] = [
   {
     id: 1,
     title: "Residential Cleaning 🏡",
     icon: Home,
+    image: "/assets/images/cleaning-modal-bg.jpg",
     subServices: [
       "Regular house cleaning",
       "Deep cleaning",
@@ -83,6 +85,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 2,
     title: "Commercial Cleaning 🏢",
     icon: Building,
+    image: "/assets/images/commercial-cleaning.jpg",
     subServices: [
       "Office cleaning",
       "Retail store cleaning",
@@ -94,6 +97,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 3,
     title: "Industrial Cleaning 🏭",
     icon: Factory,
+    image: "/assets/images/industrial-1.jpg",
     subServices: [
       "Factory cleaning",
       "Warehouse cleaning",
@@ -105,6 +109,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 4,
     title: "Healthcare & Medical Facility Cleaning 🏥",
     icon: HeartPulse,
+    image: "/assets/images/medical-cleaning.jpg",
     subServices: [
       "Hospital and clinic cleaning",
       "Operating room cleaning",
@@ -116,6 +121,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 5,
     title: "Carpet & Upholstery Cleaning 🛋️",
     icon: Armchair,
+    image: "/assets/images/carpet-1.jpg",
     subServices: [
       "Carpet steam cleaning",
       "Stain and odor removal",
@@ -127,6 +133,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 6,
     title: "Window Cleaning 🪟",
     icon: SquareSlash,
+    image: "/assets/images/window-cleaning.jpg",
     subServices: [
       "Exterior window cleaning",
       "Interior window cleaning",
@@ -138,6 +145,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 7,
     title: "Floor & Tile Cleaning 🧽",
     icon: ScanLine,
+    image: "/assets/images/tile-1.jpg",
     subServices: [
       "Tile and grout cleaning",
       "Hardwood floor polishing",
@@ -149,6 +157,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 8,
     title: "Pest Control & Sanitization 🦟",
     icon: Bug,
+    image: "/assets/images/pest-free.jpg",
     subServices: [
       "Disinfection and sanitization",
       "Termite, rodent, and insect control",
@@ -160,6 +169,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 9,
     title: "Vehicle Cleaning 🚗",
     icon: Car,
+    image: "/assets/images/washing-car-carousel.webp",
     subServices: [
       "Car interior and exterior cleaning",
       "Fleet washing",
@@ -171,6 +181,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 10,
     title: "Post-Construction Cleaning 🚧",
     icon: Hammer,
+    image: "/assets/images/post-3.jpg",
     subServices: [
       "Debris and dust removal",
       "Paint and adhesive cleanup",
@@ -182,6 +193,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 11,
     title: "Pressure Washing 💦",
     icon: Droplets,
+    image: "/assets/images/pressure-1.jpg",
     subServices: [
       "Sidewalk and driveway cleaning",
       "Building exterior cleaning",
@@ -193,6 +205,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 12,
     title: "Event Cleaning 🎉",
     icon: Music2,
+    image: "/assets/images/venue-1.jpg",
     subServices: [
       "Pre-event setup cleaning",
       "During-event maintenance cleaning",
@@ -204,6 +217,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 13,
     title: "Kitchen & Restaurant Cleaning 🍽️",
     icon: Utensils,
+    image: "/assets/images/restaurant-cleaning.jpg",
     subServices: [
       "Commercial kitchen deep cleaning",
       "Exhaust hood and duct cleaning",
@@ -215,6 +229,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 14,
     title: "Crime Scene & Trauma Cleaning 🚔",
     icon: AlertOctagon,
+    image: "/assets/images/trauma-cleaning.jpg",
     subServices: [
       "Biohazard and blood cleanup",
       "Odor and hazardous waste removal",
@@ -226,6 +241,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 15,
     title: "Data Center & IT Equipment Cleaning 🖥️",
     icon: Server,
+    image: "/assets/images/data-center-cleaning.jpg",
     subServices: [
       "Server room dust removal",
       "Anti-static equipment cleaning",
@@ -237,6 +253,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 16,
     title: "Aviation & Aircraft Cleaning ✈️",
     icon: Plane,
+    image: "/assets/images/aircraft-cleaning.jpg",
     subServices: [
       "Cabin and cockpit deep cleaning",
       "Airport terminal and lounge cleaning",
@@ -248,6 +265,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 17,
     title: "Marine & Boat Cleaning 🚢",
     icon: Anchor,
+    image: "/assets/images/boat-cleaning.jpg",
     subServices: [
       "Yacht and cruise ship cleaning",
       "Deck and hull cleaning",
@@ -259,6 +277,7 @@ const cleaningCategories: CleaningCategory[] = [
     id: 18,
     title: "Gym & Fitness Center Cleaning 🏋️",
     icon: Dumbbell,
+    image: "/assets/images/gym-cleaning.jpg",
     subServices: [
       "Sanitizing gym equipment",
       "Locker room deep cleaning",
@@ -266,7 +285,6 @@ const cleaningCategories: CleaningCategory[] = [
       "Shower and restroom cleaning",
     ],
   },
-  // ... (rest of the cleaning categories remain unchanged)
 ];
 
 // ======== MODAL COMPONENT ========
@@ -374,10 +392,11 @@ const CategoryModal = ({
             }}
           />
           <Image
-            src="/assets/cleaning-modal-bg.jpg"
+            src={category.image}
             alt={`Illustration for ${category.title} services`}
             fill
             className="object-cover mix-blend-multiply"
+            priority
           />
         </motion.div>
       </div>

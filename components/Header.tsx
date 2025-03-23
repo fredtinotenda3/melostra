@@ -33,7 +33,7 @@ const Header = () => {
   const navLinks = [
     ["Services", "/services"],
     ["Products", "/products"],
-    ["Booking", "/booking"],
+    ["Training", "/training"],
     ["About", "/about"],
     ["Contact", "/contact"],
   ];

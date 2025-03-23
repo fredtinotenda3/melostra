@@ -7,9 +7,15 @@ import { CartProvider } from "@/src/context/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// Add metadata in layout.ts
 export const metadata: Metadata = {
-  title: "CleanPro - Professional Cleaning Services",
-  description: "Your trusted partner for cleaning and pest control services",
+  title: "Melostra | Professional Cleaning & Pest Control Services",
+  description:
+    "Trusted cleaning and pest control services with eco-friendly solutions. Serving Harare since 2010.",
+  keywords: ["cleaning services", "pest control", "Harare cleaning company"],
+  openGraph: {
+    images: "/og-image.jpg",
+  },
 };
 
 export default function RootLayout({

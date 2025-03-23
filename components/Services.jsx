@@ -2,6 +2,24 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { services, whyChooseUs, testimonials } from "../constants"; // Ensure this is the correct path
 
+// Simplify pest animation
+const AnimatedIcon = ({ serviceId }: { serviceId: number }) => {
+  return (
+    <motion.div whileHover={{ scale: 1.1 }}>
+      {serviceId === "pest-control" ? (
+        <Bug className="w-6 h-6 text-blue-600" />
+      ) : (
+        <Sparkles className="w-6 h-6 text-blue-600" />
+      )}
+    </motion.div>
+  );
+};
+
+// Add price display in ServiceCard
+<h3 className="text-xl font-bold mb-3">
+  <span className="text-blue-600">From $99</span> // Add pricing
+</h3>;
+
 const Services = () => {
   return (
     <div>

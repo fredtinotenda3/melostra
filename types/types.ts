@@ -6,6 +6,7 @@ export interface CleaningCategory {
   id: number;
   title: string;
   icon: LucideIcon;
+  image: string; // Add image property
   subServices: string[];
 }
 
