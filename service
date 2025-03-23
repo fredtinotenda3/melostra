@@ -1,431 +1,626 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from "react";
 import {
-  Sparkles,
+  Home,
+  Building,
+  Factory,
+  HeartPulse,
+  Armchair,
+  SquareSlash,
+  ScanLine,
   Bug,
   Car,
+  Hammer,
+  Droplets,
+  Music2,
+  Utensils,
+  AlertOctagon,
+  Server,
+  Plane,
+  Anchor,
+  Dumbbell,
+  SprayCan,
   CheckCircle,
-  Shield,
-  Clock,
-  Leaf,
 } from "lucide-react";
-import { ErrorBoundary } from "react-error-boundary";
-import { useEffect, useState, useMemo } from "react";
-import { ServiceCategory } from "@/types/types";
+import Image from "next/image";
+import { CleaningCategory } from "@/types/types";
+import ServicesLayout from "@/components/services/ServicesLayout";
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
+// ======== BRAND THEME ========
+const brandColors = {
+  primary: "#2A5C82",
+  secondary: "#4BAF8E",
+  accent: "#FFA726",
+  neutral: "#F5F7FA",
+  dark: "#1A365D",
+};
+
+// ======== ACCESSIBILITY CONSTANTS ========
+const ariaLabels = {
+  closeModal: "Close service details modal",
+  scheduleService: "Schedule cleaning service",
+  viewPackages: "View available service packages",
+};
+
+// ======== ANIMATION CONFIG ========
+const cardAnimation = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94],
-    },
+    scale: 1,
+    transition: { type: "spring", stiffness: 120, damping: 15 },
   },
 };
 
-const cardHover = {
+const floatEffect = {
   hover: {
-    y: -8,
-    scale: 1.02,
+    y: [-5, 5, -5],
+    rotate: [-2, 2, -2],
     transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 10,
+      duration: 4,
+      repeat: Infinity,
+      ease: "easeInOut",
     },
   },
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
+// ======== CLEANING CATEGORIES ========
+const cleaningCategories: CleaningCategory[] = [
+  {
+    id: 1,
+    title: "Residential Cleaning 🏡",
+    icon: Home,
+    subServices: [
+      "Regular house cleaning",
+      "Deep cleaning",
+      "Move-in/move-out cleaning",
+      "Post-construction cleaning",
+    ],
   },
-};
+  {
+    id: 2,
+    title: "Commercial Cleaning 🏢",
+    icon: Building,
+    subServices: [
+      "Office cleaning",
+      "Retail store cleaning",
+      "Restaurant cleaning",
+      "Hotel and hospitality cleaning",
+    ],
+  },
+  {
+    id: 3,
+    title: "Industrial Cleaning 🏭",
+    icon: Factory,
+    subServices: [
+      "Factory cleaning",
+      "Warehouse cleaning",
+      "Machinery and equipment cleaning",
+      "Hazardous waste removal",
+    ],
+  },
+  {
+    id: 4,
+    title: "Healthcare & Medical Facility Cleaning 🏥",
+    icon: HeartPulse,
+    subServices: [
+      "Hospital and clinic cleaning",
+      "Operating room cleaning",
+      "Biohazard waste cleanup",
+      "Laboratory sanitization",
+    ],
+  },
+  {
+    id: 5,
+    title: "Carpet & Upholstery Cleaning 🛋️",
+    icon: Armchair,
+    subServices: [
+      "Carpet steam cleaning",
+      "Stain and odor removal",
+      "Furniture upholstery cleaning",
+      "Rug cleaning",
+    ],
+  },
+  {
+    id: 6,
+    title: "Window Cleaning 🪟",
+    icon: SquareSlash,
+    subServices: [
+      "Exterior window cleaning",
+      "Interior window cleaning",
+      "High-rise window cleaning",
+      "Glass restoration",
+    ],
+  },
+  {
+    id: 7,
+    title: "Floor & Tile Cleaning 🧽",
+    icon: ScanLine,
+    subServices: [
+      "Tile and grout cleaning",
+      "Hardwood floor polishing",
+      "Marble and granite restoration",
+      "Vinyl and laminate floor cleaning",
+    ],
+  },
+  {
+    id: 8,
+    title: "Pest Control & Sanitization 🦟",
+    icon: Bug,
+    subServices: [
+      "Disinfection and sanitization",
+      "Termite, rodent, and insect control",
+      "Fumigation services",
+      "Mold and mildew removal",
+    ],
+  },
+  {
+    id: 9,
+    title: "Vehicle Cleaning 🚗",
+    icon: Car,
+    subServices: [
+      "Car interior and exterior cleaning",
+      "Fleet washing",
+      "Truck and bus cleaning",
+      "Pressure washing for vehicles",
+    ],
+  },
+  {
+    id: 10,
+    title: "Post-Construction Cleaning 🚧",
+    icon: Hammer,
+    subServices: [
+      "Debris and dust removal",
+      "Paint and adhesive cleanup",
+      "Move-in readiness cleaning",
+      "Final polish for interiors and exteriors",
+    ],
+  },
+  {
+    id: 11,
+    title: "Pressure Washing 💦",
+    icon: Droplets,
+    subServices: [
+      "Sidewalk and driveway cleaning",
+      "Building exterior cleaning",
+      "Roof and gutter cleaning",
+      "Graffiti removal",
+    ],
+  },
+  {
+    id: 12,
+    title: "Event Cleaning 🎉",
+    icon: Music2,
+    subServices: [
+      "Pre-event setup cleaning",
+      "During-event maintenance cleaning",
+      "Post-event cleanup",
+      "Festival and concert cleaning",
+    ],
+  },
+  {
+    id: 13,
+    title: "Kitchen & Restaurant Cleaning 🍽️",
+    icon: Utensils,
+    subServices: [
+      "Commercial kitchen deep cleaning",
+      "Exhaust hood and duct cleaning",
+      "Grease trap cleaning",
+      "Restaurant floor and table sanitization",
+    ],
+  },
+  {
+    id: 14,
+    title: "Crime Scene & Trauma Cleaning 🚔",
+    icon: AlertOctagon,
+    subServices: [
+      "Biohazard and blood cleanup",
+      "Odor and hazardous waste removal",
+      "Homicide and accident scene cleaning",
+      "Suicide cleanup",
+    ],
+  },
+  {
+    id: 15,
+    title: "Data Center & IT Equipment Cleaning 🖥️",
+    icon: Server,
+    subServices: [
+      "Server room dust removal",
+      "Anti-static equipment cleaning",
+      "IT rack and wiring cleaning",
+      "Climate-controlled environment sanitization",
+    ],
+  },
+  {
+    id: 16,
+    title: "Aviation & Aircraft Cleaning ✈️",
+    icon: Plane,
+    subServices: [
+      "Cabin and cockpit deep cleaning",
+      "Airport terminal and lounge cleaning",
+      "Exterior aircraft washing",
+      "Runway and hangar cleaning",
+    ],
+  },
+  {
+    id: 17,
+    title: "Marine & Boat Cleaning 🚢",
+    icon: Anchor,
+    subServices: [
+      "Yacht and cruise ship cleaning",
+      "Deck and hull cleaning",
+      "Interior cabin detailing",
+      "Engine and mechanical cleaning",
+    ],
+  },
+  {
+    id: 18,
+    title: "Gym & Fitness Center Cleaning 🏋️",
+    icon: Dumbbell,
+    subServices: [
+      "Sanitizing gym equipment",
+      "Locker room deep cleaning",
+      "Odor and sweat stain removal",
+      "Shower and restroom cleaning",
+    ],
+  },
+  // ... rest of categories remain the same
+];
 
-const AnimatedHeading = ({
-  text,
-  className,
+// ======== MODAL COMPONENT ========
+const CategoryModal = ({
+  category,
+  onClose,
 }: {
-  text: string;
-  className?: string;
+  category: CleaningCategory,
+  onClose: () => void,
 }) => (
-  <motion.span
-    initial="hidden"
-    animate="visible"
-    className={className}
-    variants={{
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.03 },
-      },
-    }}
-  >
-    {text.split("").map((char, index) => (
-      <motion.span
-        key={index}
-        variants={{
-          hidden: { opacity: 0, y: 20 },
-          visible: { opacity: 1, y: 0 },
-        }}
-        className="inline-block"
-      >
-        {char}
-      </motion.span>
-    ))}
-  </motion.span>
-);
-
-const AnimatedIcon = ({ serviceId }: { serviceId: string }) => {
-  if (serviceId === "pest-control") {
-    return (
-      <motion.div
-        animate={{
-          x: ["0%", "15%", "-15%", "0%"],
-          y: ["0%", "-20%", "20%", "0%"],
-          rotate: [0, 15, -15, 0],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        <Bug className="w-6 h-6 text-blue-600" />
-      </motion.div>
-    );
-  }
-
-  if (serviceId === "car-cleaning") {
-    return (
-      <motion.div
-        animate={{
-          rotate: [0, 15, -15, 0],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          repeatType: "mirror",
-        }}
-      >
-        <motion.div
-          animate={{
-            backgroundPosition: ["0% 50%", "100% 50%"],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="relative overflow-hidden rounded-full"
-          style={{
-            background:
-              "linear-gradient(90deg, #e5e7eb 0%, #f9fafb 50%, #e5e7eb 100%)",
-            backgroundSize: "200% 200%",
-          }}
-        >
-          <Car className="w-6 h-6 text-blue-600 relative z-10" />
-        </motion.div>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div
-      whileHover={{ scale: 1.1 }}
-      transition={{ type: "spring", stiffness: 300 }}
-    >
-      <Sparkles className="w-6 h-6 text-blue-600" />
-    </motion.div>
-  );
-};
-
-const ServiceCardSkeleton = () => (
-  <div className="w-full bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
-    <div className="aspect-video bg-gradient-to-r from-gray-100 to-gray-200" />
-    <div className="p-6 space-y-3">
-      <div className="h-6 bg-gray-100 rounded w-3/4" />
-      <div className="h-4 bg-gray-100 rounded w-1/2" />
-      <div className="flex flex-wrap gap-2">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-5 bg-gray-100 rounded-full w-16" />
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-const WhyChooseUsMarquee = () => {
-  const reasons = [
-    { icon: CheckCircle, text: "Satisfaction Guaranteed" },
-    { icon: Shield, text: "Licensed Professionals" },
-    { icon: Leaf, text: "Eco-Friendly Solutions" },
-    { icon: Clock, text: "24/7 Availability" },
-  ];
-
-  return (
-    <motion.section
-      className="relative bg-gradient-to-r from-blue-600 to-blue-700 py-8 overflow-hidden"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "0px 0px -50px 0px" }}
-    >
-      <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
-        <div className="w-16 h-full bg-gradient-to-r from-blue-600 to-transparent" />
-        <div className="w-16 h-full bg-gradient-to-l from-blue-600 to-transparent" />
-      </div>
-
-      <motion.div
-        className="flex whitespace-nowrap"
-        animate={{ x: ["0%", "-100%"] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      >
-        {[...reasons, ...reasons].map((reason, index) => (
-          <div key={index} className="flex items-center mx-8 text-white">
-            <reason.icon className="w-5 h-5 mr-2 text-blue-200" />
-            <span className="text-sm font-medium">{reason.text}</span>
-          </div>
-        ))}
-      </motion.div>
-    </motion.section>
-  );
-};
-
-const ServiceCard = ({ service }: { service: ServiceCategory }) => (
   <motion.div
-    variants={fadeInUp}
-    whileHover="hover"
-    className="group relative h-full"
+    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    role="dialog"
+    aria-labelledby="modalTitle"
+    aria-modal="true"
   >
-    <Link
-      href={`/services/${service.id}`}
-      className="block h-full bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+    <motion.div
+      className="bg-white rounded-xl max-w-2xl w-full mx-4 p-8 relative border-2"
+      style={{
+        boxShadow: `0 20px 40px -10px ${brandColors.primary}40`,
+        borderColor: brandColors.primary,
+      }}
+      variants={{
+        hidden: { scale: 0.95, opacity: 0 },
+        visible: { scale: 1, opacity: 1 },
+        exit: { scale: 0.9, opacity: 0 },
+      }}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      transition={{ type: "spring", stiffness: 200 }}
     >
-      <motion.div variants={cardHover} className="h-full">
-        <div className="relative aspect-video overflow-hidden">
-          <Image
-            src={service.image}
-            alt={service.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            quality={85}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-gray-600 hover:text-primary transition-colors"
+        aria-label={ariaLabels.closeModal}
+      >
+        <motion.span whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+          ✕
+        </motion.span>
+      </button>
+
+      <div className="flex items-start gap-6 mb-6">
+        <motion.div
+          className="p-3 rounded-lg"
+          style={{ background: brandColors.neutral }}
+          whileHover={{ rotate: 15 }}
+        >
+          <category.icon
+            className="w-8 h-8"
+            style={{ color: brandColors.primary }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40" />
-          <div className="absolute bottom-4 left-4 p-2 bg-white/90 rounded-lg backdrop-blur-sm">
-            <AnimatedIcon serviceId={service.id} />
-          </div>
+        </motion.div>
+        <h2
+          id="modalTitle"
+          className="text-3xl font-bold"
+          style={{ color: brandColors.dark }}
+        >
+          {category.title}
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <h3
+            className="text-lg font-semibold"
+            style={{ color: brandColors.primary }}
+          >
+            Services Include:
+          </h3>
+          <ul className="space-y-2">
+            {category.subServices.map((service, idx) => (
+              <motion.li
+                key={idx}
+                className="flex items-center p-3 rounded-lg transition-all"
+                style={{ background: brandColors.neutral }}
+                whileHover={{
+                  x: 10,
+                  boxShadow: `0 5px 15px ${brandColors.primary}20`,
+                }}
+              >
+                <CheckCircle
+                  className="w-4 h-4 mr-2"
+                  style={{ color: brandColors.secondary }}
+                />
+                <span style={{ color: brandColors.dark }}>{service}</span>
+              </motion.li>
+            ))}
+          </ul>
         </div>
 
-        <div className="p-6">
-          <h3 className="text-xl font-bold mb-3">
-            <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              <AnimatedHeading text={service.title.split(" ")[0]} />
-            </span>
-            <span className="text-gray-800">
-              {" "}
-              <AnimatedHeading
-                text={service.title.split(" ").slice(1).join(" ")}
-              />
-            </span>
-          </h3>
-          <motion.p
-            className="text-gray-600 mb-4 text-sm leading-relaxed"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            {service.description}
-          </motion.p>
-          <div className="flex flex-wrap gap-2">
-            {service.services.map((s, index) => (
-              <motion.span
-                key={index}
-                className="px-3 py-1.5 bg-blue-50 text-blue-800 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"
-                whileHover={{ scale: 1.05 }}
-              >
-                {s}
-              </motion.span>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-    </Link>
+        <motion.div
+          className="relative h-64 rounded-xl overflow-hidden border-2"
+          style={{ borderColor: brandColors.neutral }}
+          initial={{ scale: 0.95 }}
+          whileInView={{ scale: 1 }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(45deg, ${brandColors.primary}20, ${brandColors.secondary}20)`,
+            }}
+          />
+          <Image
+            src="/assets/cleaning-modal-bg.jpg"
+            alt={`Illustration for ${category.title} services`}
+            fill
+            className="object-cover mix-blend-multiply"
+          />
+        </motion.div>
+      </div>
+
+      <div className="mt-6 grid grid-cols-2 gap-4">
+        <motion.button
+          className="px-6 py-3 rounded-lg font-semibold transition-colors"
+          style={{
+            background: brandColors.primary,
+            color: brandColors.neutral,
+          }}
+          whileHover={{
+            scale: 1.05,
+            background: brandColors.dark,
+            boxShadow: `0 5px 15px ${brandColors.primary}40`,
+          }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={ariaLabels.scheduleService}
+        >
+          Schedule Service
+        </motion.button>
+        <motion.button
+          className="px-6 py-3 rounded-lg font-semibold border-2 transition-colors"
+          style={{
+            borderColor: brandColors.primary,
+            color: brandColors.primary,
+          }}
+          whileHover={{
+            background: brandColors.primary,
+            color: brandColors.neutral,
+            scale: 1.05,
+          }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={ariaLabels.viewPackages}
+        >
+          View Packages
+        </motion.button>
+      </div>
+    </motion.div>
   </motion.div>
 );
 
-export default function ServicesPage() {
-  const [services, setServices] = useState<ServiceCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+// ======== CATEGORY CARD ========
+const CleaningCategoryCard = ({
+  category,
+  onClick,
+}: {
+  category: CleaningCategory,
+  onClick: () => void,
+}) => (
+  <motion.div
+    variants={cardAnimation}
+    whileHover="hover"
+    whileTap={{ scale: 0.97 }}
+    className="group relative rounded-2xl overflow-hidden cursor-pointer border-2 border-transparent"
+    style={{ background: brandColors.neutral }}
+    onClick={onClick}
+    role="button"
+    tabIndex={0}
+    onKeyDown={(e) => e.key === "Enter" && onClick()}
+    aria-label={`View ${category.title} services`}
+  >
+    <div
+      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+      style={{
+        background: `radial-gradient(circle at var(--x,50%) var(--y,50%), ${brandColors.primary}10, transparent)`,
+      }}
+    />
 
-  const serviceCategories = useMemo(
-    () => [
-      {
-        id: "cleaning",
-        title: "Professional Cleaning",
-        description:
-          "Comprehensive residential & commercial cleaning solutions",
-        image: "/assets/images/cleaning-hero.jpg",
-        icon: Sparkles,
-        services: [
-          "Deep Cleaning",
-          "Commercial",
-          "Specialized",
-          "Eco-Friendly",
-        ],
-      },
-      {
-            id: "pest-control",
-            title: "Pest Control",
-            description: "Effective elimination & prevention services",
-            image: "/assets/images/pest-control-hero.jpg",
-            icon: Bug,
-            services: ["General Pests", "Termites", "Rodents", "Fumigation"],
-          },
-      {
-        id: "car-cleaning",
-        title: "Auto Care",
-        description: "Premium vehicle cleaning & detailing",
-        image: "/assets/images/car-cleaning-hero.jpg",
-        icon: Car,
-        services: ["Interior", "Exterior", "Engine", "Detailing"],
-      },
-      // ... (other categories remain the same)
-    ],
-    []
-  );
+    <motion.div
+      className="p-6 flex flex-col items-center text-center relative"
+      whileHover={{ scale: 1.02 }}
+    >
+      <motion.div
+        className="mb-4 p-3 rounded-full"
+        style={{ background: `${brandColors.primary}15` }}
+        whileHover={{ rotate: 15 }}
+      >
+        <category.icon
+          className="w-8 h-8"
+          style={{ color: brandColors.primary }}
+        />
+      </motion.div>
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        setServices(serviceCategories);
-      } finally {
-        setLoading(false);
-      }
-    };
+      <h3
+        className="text-xl font-bold mb-2 bg-clip-text text-transparent"
+        style={{
+          backgroundImage: `linear-gradient(45deg, ${brandColors.primary}, ${brandColors.secondary})`,
+        }}
+      >
+        {category.title.split(" ")[0]}
+        <span className="text-dark">
+          {" "}
+          {category.title.split(" ").slice(1).join(" ")}
+        </span>
+      </h3>
 
-    fetchServices();
-  }, [serviceCategories]); // Added dependency
+      <div className="flex flex-wrap gap-2 justify-center">
+        {category.subServices.slice(0, 3).map((service, idx) => (
+          <motion.span
+            key={idx}
+            className="px-2 py-1 rounded-full text-sm font-medium"
+            style={{
+              background: `${brandColors.primary}15`,
+              color: brandColors.dark,
+            }}
+            whileHover={{
+              background: brandColors.primary,
+              color: brandColors.neutral,
+              scale: 1.05,
+            }}
+          >
+            {service}
+          </motion.span>
+        ))}
+      </div>
+    </motion.div>
+
+    <motion.div
+      className="absolute -top-4 -right-4 opacity-5"
+      variants={floatEffect}
+    >
+      <category.icon
+        className="w-24 h-24"
+        style={{ color: brandColors.primary }}
+      />
+    </motion.div>
+  </motion.div>
+);
+
+// ======== MAIN PAGE ========
+export default function ProfessionalCleaningPage() {
+  const [selectedCategory, setSelectedCategory] =
+    (useState < CleaningCategory) | (null > null);
 
   return (
-    <div>
-      <div className="min-h-screen bg-gray-50 pt-[calc(68px_+_0.5cm)] ">
-        <AnimatePresence>
-          <motion.main
+    <ServicesLayout>
+      <div
+        className="min-h-screen pt-24 mt-0"
+        style={{ background: brandColors.neutral }}
+      >
+        <div className="container mx-auto px-4 py-12">
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="container mx-auto px-4 pb-16"
+            transition={{ duration: 0.2 }}
           >
+            <header className="text-center mb-16 px-4">
+              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6">
+                Professional Cleaning Solutions
+              </h1>
+              <p
+                className="text-xl max-w-3xl mx-auto"
+                style={{ color: brandColors.dark }}
+              >
+                Comprehensive cleaning services for every environment - From
+                homes to high-rises, we deliver exceptional results with
+                eco-friendly solutions.
+              </p>
+            </header>
+
             <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
               initial="hidden"
               animate="visible"
-              variants={staggerContainer}
+              variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
+              role="grid"
+              aria-label="Service categories"
             >
-              <motion.div variants={fadeInUp} className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-5">
-                  <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                    <AnimatedHeading text="Premium Service" />
-                  </span>
-                  <span className="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                    {" "}
-                    <AnimatedHeading text="Solutions" />
-                  </span>
-                </h1>
-                <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                  <AnimatedHeading
-                    text="Experience cutting-edge technology and eco-friendly practices"
-                    className="inline-block"
-                  />
-                </p>
-              </motion.div>
-
-              <motion.div
-                variants={staggerContainer}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
-              >
-                {loading
-                  ? [...Array(3)].map((_, i) => <ServiceCardSkeleton key={i} />)
-                  : services.map((service) => (
-                      <ErrorBoundary
-                        key={service.id}
-                        fallback={<ServiceCardSkeleton />}
-                      >
-                        <ServiceCard service={service} />
-                      </ErrorBoundary>
-                    ))}
-              </motion.div>
-
-              <WhyChooseUsMarquee />
-
-              <motion.section
-                variants={staggerContainer}
-                className="bg-white rounded-2xl shadow-sm p-8 mt-12"
-              >
-                <motion.h2
-                  variants={fadeInUp}
-                  className="text-3xl font-bold text-center mb-8"
-                >
-                  <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                    Our Cleaning Philosophy
-                  </span>
-                </motion.h2>
-
-                <motion.div
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-                  variants={staggerContainer}
-                >
-                  {[
-                    {
-                      title: "Certified Experts",
-                      content: "Trained and background-checked professionals",
-                      icon: Shield,
-                    },
-                    {
-                      title: "Satisfaction Guarantee",
-                      content: "100% money-back guarantee",
-                      icon: CheckCircle,
-                    },
-                    {
-                      title: "Eco-Friendly",
-                      content: "Green cleaning solutions available",
-                      icon: Leaf,
-                    },
-                    {
-                      title: "Flexible Scheduling",
-                      content: "24/7 booking availability",
-                      icon: Clock,
-                    },
-                  ].map((item, index) => (
-                    <motion.div
-                      key={index}
-                      variants={fadeInUp}
-                      className="p-6 bg-blue-50 rounded-xl text-center"
-                      whileHover={{ y: -5 }}
-                    >
-                      <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <item.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm">{item.content}</p>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </motion.section>
+              {cleaningCategories.map((category) => (
+                <CleaningCategoryCard
+                  key={category.id}
+                  category={category}
+                  onClick={() => setSelectedCategory(category)}
+                  role="gridcell"
+                />
+              ))}
             </motion.div>
-          </motion.main>
-        </AnimatePresence>
+
+            <section aria-labelledby="whyChooseUsHeading">
+              <h2 id="whyChooseUsHeading" className="sr-only">
+                Why Choose Us
+              </h2>
+              <motion.div
+                className="rounded-2xl p-8 text-center relative overflow-hidden border-2 mb-20"
+                style={{
+                  backgroundColor: brandColors.dark,
+                  borderColor: brandColors.primary,
+                }}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {["Certified Experts", "Eco-Friendly", "24/7 Support"].map(
+                    (item) => (
+                      <motion.div
+                        key={item}
+                        className="p-6 rounded-xl backdrop-blur-sm border-2"
+                        style={{
+                          background: `${brandColors.primary}15`,
+                          color: brandColors.neutral,
+                          borderColor: brandColors.primary,
+                        }}
+                        whileHover={{
+                          y: -10,
+                          background: `${brandColors.primary}30`,
+                          boxShadow: `0 10px 20px ${brandColors.primary}20`,
+                        }}
+                      >
+                        <h3
+                          className="text-xl font-semibold mb-3"
+                          style={{ color: brandColors.secondary }}
+                        >
+                          {item}
+                        </h3>
+                        <p className="text-sm opacity-90">
+                          {item === "Certified Experts" &&
+                            "Trained professionals with background checks"}
+                          {item === "Eco-Friendly" &&
+                            "Green cleaning solutions and practices"}
+                          {item === "24/7 Support" &&
+                            "Round-the-clock customer service"}
+                        </p>
+                      </motion.div>
+                    )
+                  )}
+                </div>
+              </motion.div>
+            </section>
+          </motion.div>
+
+          <AnimatePresence>
+            {selectedCategory && (
+              <CategoryModal
+                category={selectedCategory}
+                onClose={() => setSelectedCategory(null)}
+              />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </ServicesLayout>
   );
 }

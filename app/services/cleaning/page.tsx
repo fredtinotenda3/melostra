@@ -21,12 +21,11 @@ import {
   Plane,
   Anchor,
   Dumbbell,
-  SprayCan,
   CheckCircle,
 } from "lucide-react";
-
 import Image from "next/image";
 import { CleaningCategory } from "@/types/types";
+import ServicesLayout from "@/components/services/ServicesLayout";
 
 // ======== BRAND THEME ========
 const brandColors = {
@@ -35,6 +34,13 @@ const brandColors = {
   accent: "#FFA726",
   neutral: "#F5F7FA",
   dark: "#1A365D",
+};
+
+// ======== ACCESSIBILITY CONSTANTS ========
+const ariaLabels = {
+  closeModal: "Close service details modal",
+  scheduleService: "Schedule cleaning service",
+  viewPackages: "View available service packages",
 };
 
 // ======== ANIMATION CONFIG ========
@@ -61,7 +67,7 @@ const floatEffect = {
 };
 
 // ======== CLEANING CATEGORIES ========
-const cleaningCategories = [
+const cleaningCategories: CleaningCategory[] = [
   {
     id: 1,
     title: "Residential Cleaning 🏡",
@@ -260,6 +266,7 @@ const cleaningCategories = [
       "Shower and restroom cleaning",
     ],
   },
+  // ... (rest of the cleaning categories remain unchanged)
 ];
 
 // ======== MODAL COMPONENT ========
@@ -275,6 +282,9 @@ const CategoryModal = ({
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
+    role="dialog"
+    aria-labelledby="modalTitle"
+    aria-modal="true"
   >
     <motion.div
       className="bg-white rounded-xl max-w-2xl w-full mx-4 p-8 relative border-2"
@@ -295,6 +305,7 @@ const CategoryModal = ({
       <button
         onClick={onClose}
         className="absolute top-4 right-4 text-gray-600 hover:text-primary transition-colors"
+        aria-label={ariaLabels.closeModal}
       >
         <motion.span whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
           ✕
@@ -312,7 +323,11 @@ const CategoryModal = ({
             style={{ color: brandColors.primary }}
           />
         </motion.div>
-        <h2 className="text-3xl font-bold" style={{ color: brandColors.dark }}>
+        <h2
+          id="modalTitle"
+          className="text-3xl font-bold"
+          style={{ color: brandColors.dark }}
+        >
           {category.title}
         </h2>
       </div>
@@ -326,13 +341,11 @@ const CategoryModal = ({
             Services Include:
           </h3>
           <ul className="space-y-2">
-            {category.subServices.map((service: string, idx: number) => (
+            {category.subServices.map((service, idx) => (
               <motion.li
                 key={idx}
                 className="flex items-center p-3 rounded-lg transition-all"
-                style={{
-                  background: brandColors.neutral,
-                }}
+                style={{ background: brandColors.neutral }}
                 whileHover={{
                   x: 10,
                   boxShadow: `0 5px 15px ${brandColors.primary}20`,
@@ -362,10 +375,9 @@ const CategoryModal = ({
           />
           <Image
             src="/assets/cleaning-modal-bg.jpg"
-            alt={category.title}
+            alt={`Illustration for ${category.title} services`}
             fill
             className="object-cover mix-blend-multiply"
-            priority
           />
         </motion.div>
       </div>
@@ -383,6 +395,7 @@ const CategoryModal = ({
             boxShadow: `0 5px 15px ${brandColors.primary}40`,
           }}
           whileTap={{ scale: 0.95 }}
+          aria-label={ariaLabels.scheduleService}
         >
           Schedule Service
         </motion.button>
@@ -398,6 +411,7 @@ const CategoryModal = ({
             scale: 1.05,
           }}
           whileTap={{ scale: 0.95 }}
+          aria-label={ariaLabels.viewPackages}
         >
           View Packages
         </motion.button>
@@ -419,10 +433,12 @@ const CleaningCategoryCard = ({
     whileHover="hover"
     whileTap={{ scale: 0.97 }}
     className="group relative rounded-2xl overflow-hidden cursor-pointer border-2 border-transparent"
-    style={{
-      background: brandColors.neutral,
-    }}
+    style={{ background: brandColors.neutral }}
     onClick={onClick}
+    role="button"
+    tabIndex={0}
+    onKeyDown={(e) => e.key === "Enter" && onClick()}
+    aria-label={`View ${category.title} services`}
   >
     <div
       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -437,7 +453,7 @@ const CleaningCategoryCard = ({
     >
       <motion.div
         className="mb-4 p-3 rounded-full"
-        style={{ background: brandColors.primary + "15" }}
+        style={{ background: `${brandColors.primary}15` }}
         whileHover={{ rotate: 15 }}
       >
         <category.icon
@@ -460,25 +476,23 @@ const CleaningCategoryCard = ({
       </h3>
 
       <div className="flex flex-wrap gap-2 justify-center">
-        {category.subServices
-          .slice(0, 3)
-          .map((service: string, idx: number) => (
-            <motion.span
-              key={idx}
-              className="px-2 py-1 rounded-full text-sm font-medium"
-              style={{
-                background: brandColors.primary + "15",
-                color: brandColors.dark,
-              }}
-              whileHover={{
-                background: brandColors.primary,
-                color: brandColors.neutral,
-                scale: 1.05,
-              }}
-            >
-              {service}
-            </motion.span>
-          ))}
+        {category.subServices.slice(0, 3).map((service, idx) => (
+          <motion.span
+            key={idx}
+            className="px-2 py-1 rounded-full text-sm font-medium"
+            style={{
+              background: `${brandColors.primary}15`,
+              color: brandColors.dark,
+            }}
+            whileHover={{
+              background: brandColors.primary,
+              color: brandColors.neutral,
+              scale: 1.05,
+            }}
+          >
+            {service}
+          </motion.span>
+        ))}
       </div>
     </motion.div>
 
@@ -500,44 +514,99 @@ export default function ProfessionalCleaningPage() {
     useState<CleaningCategory | null>(null);
 
   return (
-    <div>
+    <ServicesLayout>
       <div
-        className="min-h-screen pt-24"
+        className="min-h-screen pt-16"
         style={{ background: brandColors.neutral }}
       >
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-8">
           <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
           >
-            <h1 className="text-4xl md:text-6xl font-bold  bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Professional Cleaning Solutions
-            </h1>
-            <p
-              className="text-xl max-w-3xl mx-auto"
-              style={{ color: brandColors.dark }}
-            >
-              Comprehensive cleaning services for every environment - From homes
-              to high-rises, we deliver exceptional results with eco-friendly
-              solutions.
-            </p>
-          </motion.div>
+            <header className="text-center mb-8 px-4">
+              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
+                Professional Cleaning Solutions
+              </h1>
+              <p
+                className="text-xl max-w-3xl mx-auto"
+                style={{ color: brandColors.dark }}
+              >
+                Comprehensive cleaning services for every environment - From
+                homes to high-rises, we deliver exceptional results with
+                eco-friendly solutions.
+              </p>
+            </header>
 
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
-            initial="hidden"
-            animate="visible"
-            variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
-          >
-            {cleaningCategories.map((category) => (
-              <CleaningCategoryCard
-                key={category.id}
-                category={category}
-                onClick={() => setSelectedCategory(category)}
-              />
-            ))}
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
+              initial="hidden"
+              animate="visible"
+              variants={{ visible: { transition: { staggerChildren: 0.15 } } }} // Added missing closing brace
+              role="grid"
+              aria-label="Service categories"
+            >
+              {cleaningCategories.map((category) => (
+                <CleaningCategoryCard
+                  key={category.id}
+                  category={category}
+                  onClick={() => setSelectedCategory(category)}
+                />
+              ))}
+            </motion.div>
+
+            <section aria-labelledby="whyChooseUsHeading">
+              <h2 id="whyChooseUsHeading" className="sr-only">
+                Why Choose Us
+              </h2>
+              <motion.div
+                className="rounded-2xl p-6 text-center relative overflow-hidden border-2 mb-12"
+                style={{
+                  backgroundColor: brandColors.dark,
+                  borderColor: brandColors.primary,
+                }}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {["Certified Experts", "Eco-Friendly", "24/7 Support"].map(
+                    (item) => (
+                      <motion.div
+                        key={item}
+                        className="p-4 rounded-xl backdrop-blur-sm border-2"
+                        style={{
+                          background: `${brandColors.primary}15`,
+                          color: brandColors.neutral,
+                          borderColor: brandColors.primary,
+                        }}
+                        whileHover={{
+                          y: -10,
+                          background: `${brandColors.primary}30`,
+                          boxShadow: `0 10px 20px ${brandColors.primary}20`,
+                        }}
+                      >
+                        <h3
+                          className="text-lg font-semibold mb-2"
+                          style={{ color: brandColors.secondary }}
+                        >
+                          {item}
+                        </h3>
+                        <p className="text-sm opacity-90">
+                          {item === "Certified Experts" &&
+                            "Trained professionals with background checks"}
+                          {item === "Eco-Friendly" &&
+                            "Green cleaning solutions and practices"}
+                          {item === "24/7 Support" &&
+                            "Round-the-clock customer service"}
+                        </p>
+                      </motion.div>
+                    )
+                  )}
+                </div>
+              </motion.div>
+            </section>
           </motion.div>
 
           <AnimatePresence>
@@ -548,90 +617,8 @@ export default function ProfessionalCleaningPage() {
               />
             )}
           </AnimatePresence>
-
-          <motion.section
-            className="rounded-2xl p-8 text-center relative overflow-hidden border-2"
-            style={{
-              backgroundColor: brandColors.dark,
-              borderColor: brandColors.primary,
-            }}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="absolute inset-0 opacity-10">
-              {[...Array(15)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute"
-                  style={{
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
-                  }}
-                  animate={{
-                    scale: [0, 1, 0],
-                    opacity: [0, 0.3, 0],
-                    rotate: [0, 180],
-                  }}
-                  transition={{
-                    duration: Math.random() * 5 + 5,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                >
-                  <SprayCan
-                    className="w-12 h-12"
-                    style={{ color: brandColors.primary }}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            <h2
-              className="text-3xl font-bold mb-6"
-              style={{ color: brandColors.neutral }}
-            >
-              Why Choose Our Services?
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {["Certified Experts", "Eco-Friendly", "24/7 Support"].map(
-                (item) => (
-                  <motion.div
-                    key={item}
-                    className="p-6 rounded-xl backdrop-blur-sm border-2"
-                    style={{
-                      background: brandColors.primary + "15",
-                      color: brandColors.neutral,
-                      borderColor: brandColors.primary,
-                    }}
-                    whileHover={{
-                      y: -10,
-                      background: brandColors.primary + "30",
-                      boxShadow: `0 10px 20px ${brandColors.primary}20`,
-                    }}
-                  >
-                    <h3
-                      className="text-xl font-semibold mb-3"
-                      style={{ color: brandColors.secondary }}
-                    >
-                      {item}
-                    </h3>
-                    <p className="text-sm opacity-90">
-                      {item === "Certified Experts" &&
-                        "Trained professionals with background checks"}
-                      {item === "Eco-Friendly" &&
-                        "Green cleaning solutions and practices"}
-                      {item === "24/7 Support" &&
-                        "Round-the-clock customer service"}
-                    </p>
-                  </motion.div>
-                )
-              )}
-            </div>
-          </motion.section>
         </div>
       </div>
-    </div>
+    </ServicesLayout>
   );
 }

@@ -40,6 +40,23 @@ const cardHover = {
   },
 };
 
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      type: "spring",
+      bounce: 0.2,
+    },
+  },
+  hover: {
+    y: -5,
+    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+  },
+};
+
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -200,8 +217,11 @@ const WhyChooseUsMarquee = () => {
 
 const ServiceCard = ({ service }: { service: ServiceCategory }) => (
   <motion.div
-    variants={fadeInUp}
+    variants={cardVariants}
+    initial="hidden"
+    whileInView="visible"
     whileHover="hover"
+    viewport={{ once: true, margin: "0px 0px -100px 0px" }}
     className="group relative h-full"
   >
     <Link
